@@ -1,0 +1,18 @@
+C:\Users\Sergio-TA\Desktop\CRUD Generator\CRUDGen\Linnso.CRUDGen.BL.BC\bin\Debug\Linnso.CRUDGen.BL.BC.dll
+C:\Users\Sergio-TA\Desktop\CRUD Generator\CRUDGen\Linnso.CRUDGen.BL.BC\bin\Debug\Linnso.CRUDGen.BL.BC.pdb
+C:\Users\Sergio-TA\Desktop\CRUD Generator\CRUDGen\Linnso.CRUDGen.BL.BC\obj\Debug\Linnso.CRUDGen.BL.BC.dll
+C:\Users\Sergio-TA\Desktop\CRUD Generator\CRUDGen\Linnso.CRUDGen.BL.BC\obj\Debug\Linnso.CRUDGen.BL.BC.pdb
+C:\Users\Sergio-TA\Desktop\CRUD Generator\CRUDGen\Linnso.CRUDGen.BL.BC\obj\Debug\Linnso.CRUDGen.BL.BC.csprojResolveAssemblyReference.cache
+C:\Users\Sergio-TA\Desktop\CRUD Generator\CRUDGen\Linnso.CRUDGen.BL.BC\bin\Debug\Linnso.CRUDGen.DL.DALC.dll
+C:\Users\Sergio-TA\Desktop\CRUD Generator\CRUDGen\Linnso.CRUDGen.BL.BC\bin\Debug\Linnso.CRUDGen.DL.DALC.pdb
+C:\Users\Sergio-TA\Desktop\CRUD Generator\CRUDGen\Linnso.CRUDGen.BL.BC\bin\Debug\Linnso.CRUDGen.BL.BE.dll
+C:\Users\Sergio-TA\Desktop\CRUD Generator\CRUDGen\Linnso.CRUDGen.BL.BC\bin\Debug\Linnso.CRUDGen.BL.BE.pdb
+C:\Users\Sergio Minei\Desktop\Linnso\Softwares\CRUD Generator\trunk\CRUDGen\Linnso.CRUDGen.BL.BC\bin\Debug\Linnso.CRUDGen.BL.BC.dll
+C:\Users\Sergio Minei\Desktop\Linnso\Softwares\CRUD Generator\trunk\CRUDGen\Linnso.CRUDGen.BL.BC\bin\Debug\Linnso.CRUDGen.BL.BC.pdb
+C:\Users\Sergio Minei\Desktop\Linnso\Softwares\CRUD Generator\trunk\CRUDGen\Linnso.CRUDGen.BL.BC\bin\Debug\Linnso.CRUDGen.BL.BE.dll
+C:\Users\Sergio Minei\Desktop\Linnso\Softwares\CRUD Generator\trunk\CRUDGen\Linnso.CRUDGen.BL.BC\bin\Debug\Linnso.CRUDGen.DL.DALC.dll
+C:\Users\Sergio Minei\Desktop\Linnso\Softwares\CRUD Generator\trunk\CRUDGen\Linnso.CRUDGen.BL.BC\bin\Debug\Linnso.CRUDGen.BL.BE.pdb
+C:\Users\Sergio Minei\Desktop\Linnso\Softwares\CRUD Generator\trunk\CRUDGen\Linnso.CRUDGen.BL.BC\bin\Debug\Linnso.CRUDGen.DL.DALC.pdb
+C:\Users\Sergio Minei\Desktop\Linnso\Softwares\CRUD Generator\trunk\CRUDGen\Linnso.CRUDGen.BL.BC\obj\Debug\Linnso.CRUDGen.BL.BC.dll
+C:\Users\Sergio Minei\Desktop\Linnso\Softwares\CRUD Generator\trunk\CRUDGen\Linnso.CRUDGen.BL.BC\obj\Debug\Linnso.CRUDGen.BL.BC.pdb
+C:\Users\Sergio Minei\Desktop\Linnso\Softwares\CRUD Generator\trunk\CRUDGen\Linnso.CRUDGen.BL.BC\obj\Debug\Linnso.CRUDGen.BL.BC.csprojResolveAssemblyReference.cache
