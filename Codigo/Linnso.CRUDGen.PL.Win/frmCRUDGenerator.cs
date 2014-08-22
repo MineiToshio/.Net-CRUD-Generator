@@ -28,5 +28,12 @@ namespace Linnso.CRUDGen.PL.Win
             form.Show();
             form.ServerFocus();
         }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmAbout form = frmAbout.GetInstance();
+            form.MdiParent = this;
+            form.Show();
+        }
     }
 }

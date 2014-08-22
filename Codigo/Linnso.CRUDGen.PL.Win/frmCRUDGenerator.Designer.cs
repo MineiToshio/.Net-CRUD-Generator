@@ -70,19 +70,19 @@
             // tsmConectar
             // 
             this.tsmConectar.Name = "tsmConectar";
-            this.tsmConectar.Size = new System.Drawing.Size(152, 22);
+            this.tsmConectar.Size = new System.Drawing.Size(122, 22);
             this.tsmConectar.Text = "Conectar";
             this.tsmConectar.Click += new System.EventHandler(this.tsmConectar_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(119, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.exitToolStripMenuItem.Text = "&Salir";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolsStripMenuItem_Click);
             // 
@@ -113,6 +113,7 @@
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.aboutToolStripMenuItem.Text = "&Acerca de CRUD Generator";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // statusStrip
             // 
@@ -126,8 +127,8 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(164, 17);
-            this.toolStripStatusLabel1.Text = "Linnso© - All Rights Reserved";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(250, 17);
+            this.toolStripStatusLabel1.Text = "Linnso SAC© - Todos los derechos reservados";
             // 
             // frmCRUDGenerator
             // 
