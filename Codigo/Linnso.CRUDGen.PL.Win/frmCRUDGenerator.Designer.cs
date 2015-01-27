@@ -133,6 +133,7 @@
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(296, 30);
             this.aboutToolStripMenuItem.Text = "&Acerca de CRUD Generator";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // statusStrip
             // 
@@ -147,8 +148,8 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(248, 25);
-            this.toolStripStatusLabel1.Text = "Linnso© - All Rights Reserved";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(250, 17);
+            this.toolStripStatusLabel1.Text = "Linnso SAC© - Todos los derechos reservados";
             // 
             // frmCRUDGenerator
             // 
