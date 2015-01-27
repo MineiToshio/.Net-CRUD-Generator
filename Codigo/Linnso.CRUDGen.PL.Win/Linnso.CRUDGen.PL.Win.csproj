@@ -52,6 +52,12 @@
     <Compile Include="frmAccesoBD.Designer.cs">
       <DependentUpon>frmAccesoBD.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmConfiguracion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmConfiguracion.Designer.cs">
+      <DependentUpon>frmConfiguracion.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmCRUDGenerator.cs">
       <SubType>Form</SubType>
     </Compile>

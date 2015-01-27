@@ -14,7 +14,7 @@ namespace Linnso.CRUDGen.BL.BC
             switch (SqlType.ToLower())
             {
                 case "bigint":
-                    return "Int64";
+                    return "long";
 
                 case "binary":
                 case "image":
@@ -23,7 +23,7 @@ namespace Linnso.CRUDGen.BL.BC
                     return "byte[]";
 
                 case "bit":
-                    return "Boolean";
+                    return "bool";
 
                 case "char":
                 case "nchar":
@@ -32,7 +32,7 @@ namespace Linnso.CRUDGen.BL.BC
                 case "text":
                 case "varchar":
                 case "xml":
-                    return "String";
+                    return "string";
 
                 case "datetime":
                 case "smalldatetime":
@@ -51,7 +51,7 @@ namespace Linnso.CRUDGen.BL.BC
                     return "double";
 
                 case "int":
-                    return "Int32";
+                    return "int";
 
                 case "real":
                     return "float";
@@ -60,7 +60,7 @@ namespace Linnso.CRUDGen.BL.BC
                     return "Guid";
 
                 case "smallint":
-                    return "Int16";
+                    return "short";
 
                 case "tinyint":
                     return "byte";
@@ -131,6 +131,77 @@ namespace Linnso.CRUDGen.BL.BC
                 parametros = parametros.Substring(0, parametros.Length - 2);
 
             return parametros;
+        }
+
+        public static String ConvertFromSQLNULL(String SqlType, String variable)
+        {
+            switch (SqlType.ToLower())
+            {
+                case "bigint":
+                    return "dr[\"" + variable + "\"] as long?";
+
+                case "binary":
+                case "image":
+                case "timestamp":
+                case "varbinary":
+                    return "(byte[])dr[\"" + variable + "\"]";
+
+                case "bit":
+                    return "dr[\"" + variable + "\"] as bool?";
+
+                case "char":
+                case "nchar":
+                case "ntext":
+                case "nvarchar":
+                case "text":
+                case "varchar":
+                case "xml":
+                    return "dr[\"" + variable + "\"] as string";
+
+                case "datetime":
+                case "smalldatetime":
+                case "date":
+                case "time":
+                case "datetime2":
+                    return "dr[\"" + variable + "\"] as DateTime?";
+
+                case "decimal":
+                case "money":
+                case "smallmoney":
+                case "numeric":
+                    return "dr[\"" + variable + "\"] as decimal?";
+
+                case "float":
+                    return "dr[\"" + variable + "\"] as double?";
+
+                case "int":
+                    return "dr[\"" + variable + "\"] as int?";
+
+                case "real":
+                    return "dr.GetFloat(dr.GetOrdinal(\"" + variable + "\"))";
+
+                case "uniqueidentifier":
+                    return "dr.GetGuid(dr.GetOrdinal(\"" + variable + "\"))";
+
+                case "smallint":
+                    return "dr[\"" + variable + "\"] as short?";
+
+                case "tinyint":
+                    return "dr[\"" + variable + "\"] as byte?";
+
+                case "variant":
+                case "udt":
+                    return "(object)dr[\"" + variable + "\"]";
+
+                case "structured":
+                    return "DataTable";
+
+                case "datetimeoffset":
+                    return "DateTimeOffset.Parse(dr[\"" + variable + "\"])";
+
+                default:
+                    return "(dr[\"" + SqlType + ")" + variable + "\"])";
+            }
         }
 
         public static String ConvertFromSQL(String SqlType, String variable)

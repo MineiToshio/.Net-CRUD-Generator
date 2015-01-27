@@ -24,7 +24,7 @@ namespace Linnso.CRUDGen.BL.BC
             }
         }
 
-        public void GenerarHeaderSP(StreamWriter sp)
+        public void GenerarHeaderSP(StreamWriter sp, Modo modo)
         {
             sp.WriteLine("GO");
             sp.WriteLine("SET ANSI_NULLS ON");
@@ -32,6 +32,33 @@ namespace Linnso.CRUDGen.BL.BC
             sp.WriteLine("SET QUOTED_IDENTIFIER ON");
             sp.WriteLine("GO");
             sp.WriteLine("");
+            sp.WriteLine("-- =============================================");
+            sp.WriteLine("-- Author:	 Store Procedure Autogenerado Por CRUDGen");
+            sp.WriteLine("-- Create date: " + DateTime.Now.Day + "/" + DateTime.Now.Month + "/" + DateTime.Now.Year + "");
+
+            switch(modo)
+            {
+                case Modo.Actualizar:
+                    sp.WriteLine("-- Description: Actualiza un " + _objTablaBE.Nombre);
+                    break;
+                case Modo.Eliminar:
+                    sp.WriteLine("-- Description: Elimina un " + _objTablaBE.Nombre);
+                    break;
+                case Modo.Insertar:
+                    sp.WriteLine("-- Description: Inserta un " + _objTablaBE.Nombre);
+                    break;
+                case Modo.Insertar_Actualizar:
+                    sp.WriteLine("-- Description: Inserta y/o actualizar un " + _objTablaBE.Nombre);
+                    break;
+                case Modo.Seleccioar_X_ID:
+                    sp.WriteLine("-- Description: Obtiene un " + _objTablaBE.Nombre + "por su ID");
+                    break;
+                case Modo.Seleccionar:
+                    sp.WriteLine("-- Description: Selecciona todos los elementos de la tabla " + _objTablaBE.Nombre);
+                    break;
+            }
+            
+            sp.WriteLine("-- =============================================");
         }
 
         public void GenerarInsert()
@@ -42,7 +69,8 @@ namespace Linnso.CRUDGen.BL.BC
 
             using (StreamWriter sp = File.AppendText(_Ruta))
             {
-                GenerarHeaderSP(sp);
+                GenerarHeaderSP(sp, Modo.Insertar);
+                
                 sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Insert] (");
                 foreach(ColumnaBE c in _lstColumnaBE)
                 {
@@ -104,7 +132,7 @@ namespace Linnso.CRUDGen.BL.BC
 
                 using (StreamWriter sp = File.AppendText(_Ruta))
                 {
-                    GenerarHeaderSP(sp);
+                    GenerarHeaderSP(sp, Modo.Actualizar);
                     sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Update] (");
                     foreach (ColumnaBE c in _lstColumnaBE)
                     {
@@ -158,7 +186,7 @@ namespace Linnso.CRUDGen.BL.BC
 
                 using (StreamWriter sp = File.AppendText(_Ruta))
                 {
-                    GenerarHeaderSP(sp);
+                    GenerarHeaderSP(sp, Modo.Insertar_Actualizar);
                     sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Insert_Update] (");
                     foreach (ColumnaBE c in _lstColumnaBE)
                     {
@@ -273,7 +301,7 @@ namespace Linnso.CRUDGen.BL.BC
 
             using (StreamWriter sp = File.AppendText(_Ruta))
             {
-                GenerarHeaderSP(sp);
+                GenerarHeaderSP(sp, Modo.Eliminar);
                 sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Delete] (");
                 foreach (ColumnaBE c in _lstColumnaBE)
                 {
@@ -313,7 +341,7 @@ namespace Linnso.CRUDGen.BL.BC
 
             using (StreamWriter sp = File.AppendText(_Ruta))
             {
-                GenerarHeaderSP(sp);
+                GenerarHeaderSP(sp, Modo.Seleccionar);
                 sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Select]");
                 sp.WriteLine("AS");
                 sp.WriteLine("BEGIN");
@@ -343,7 +371,7 @@ namespace Linnso.CRUDGen.BL.BC
 
             using (StreamWriter sp = File.AppendText(_Ruta))
             {
-                GenerarHeaderSP(sp);
+                GenerarHeaderSP(sp, Modo.Seleccioar_X_ID);
                 sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Get](");
                 foreach (ColumnaBE c in _lstColumnaBE)
                 {

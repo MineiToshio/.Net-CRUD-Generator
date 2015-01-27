@@ -469,15 +469,11 @@ namespace Linnso.CRUDGen.BL.BC
                 {
                     switch (ToolBC.TypeFromSQL(c.Tipo_Dato))
                     {
-                        case "String":
-                        case "byte[]":
-                            dalc.WriteLine("                                obj" + _objTablaBE.Nombre_Sin_Espacios + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = dr[\"" + c.Nombre + "\"] != DBNull.Value ? " + ToolBC.ConvertFromSQL(c.Tipo_Dato, c.Nombre) + " : null;");
-                            break;
                         case "object":
                             dalc.WriteLine("                                obj" + _objTablaBE.Nombre_Sin_Espacios + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = dr[\"" + c.Nombre + "\"] != DBNull.Value ? (" + ToolBC.TypeFromSQL(c.Tipo_Dato) + "?)dr[\"" + c.Nombre + "\"]" + " : null;");
                             break;
                         default:
-                            dalc.WriteLine("                                obj" + _objTablaBE.Nombre_Sin_Espacios + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = dr[\"" + c.Nombre + "\"] != DBNull.Value ? (" + ToolBC.TypeFromSQL(c.Tipo_Dato) + "?)" + ToolBC.ConvertFromSQL(c.Tipo_Dato, c.Nombre) + " : null;");
+                            dalc.WriteLine("                                obj" + _objTablaBE.Nombre_Sin_Espacios + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = " + ToolBC.ConvertFromSQLNULL(c.Tipo_Dato, c.Nombre));
                             break;
                     }
                 }

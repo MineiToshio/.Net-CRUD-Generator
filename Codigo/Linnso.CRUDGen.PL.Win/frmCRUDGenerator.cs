@@ -28,5 +28,12 @@ namespace Linnso.CRUDGen.PL.Win
             form.Show();
             form.ServerFocus();
         }
+
+        private void tsmDatosInicio_Click(object sender, EventArgs e)
+        {
+            frmConfiguracion form = frmConfiguracion.GetInstance();
+            form.MdiParent = this;
+            form.Show();
+        }
     }
 }
