@@ -148,7 +148,7 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(250, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(380, 25);
             this.toolStripStatusLabel1.Text = "Linnso SAC© - Todos los derechos reservados";
             // 
             // frmCRUDGenerator
@@ -161,6 +161,7 @@
             this.MainMenuStrip = this.menuStrip;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "frmCRUDGenerator";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CRUD Generator";
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
