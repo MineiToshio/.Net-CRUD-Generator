@@ -106,13 +106,13 @@ namespace Linnso.CRUDGen.DL.DALC
                 command.CommandType = CommandType.Text;
                 command.CommandText = "SELECT distinct c.COLUMN_NAME, " +
                                         "c.IS_NULLABLE, " + 
-                                        "c.DATA_TYPE, " + 
-                                        "case when k.COLUMN_NAME is null then 'NO' else 'YES' end 'IS_PK', " + 
+                                        "c.DATA_TYPE, " +
+                                        "case when (select COUNT(k.COLUMN_NAME) from INFORMATION_SCHEMA.KEY_COLUMN_USAGE k left join INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc on k.CONSTRAINT_NAME = tc.CONSTRAINT_NAME AND k.TABLE_NAME = tc.TABLE_NAME where tc.CONSTRAINT_TYPE = 'PRIMARY KEY' and k.TABLE_NAME = c.TABLE_NAME and k.COLUMN_NAME = c.COLUMN_NAME) > 0 then 'YES' else 'NO' end 'IS_PK', " + 
                                         "case when columnproperty(object_id(c.table_name), c.column_name,'IsIdentity') = 1 then 'YES' else 'NO' end 'IS_IDENTITY', " +
                                         "c.CHARACTER_MAXIMUM_LENGTH, " +
                                         "c.NUMERIC_PRECISION, " +
                                         "c.NUMERIC_PRECISION_RADIX " + 
-                                        "FROM INFORMATION_SCHEMA.COLUMNS c left join INFORMATION_SCHEMA.KEY_COLUMN_USAGE k on c.COLUMN_NAME = k.COLUMN_NAME " + 
+                                        "FROM INFORMATION_SCHEMA.COLUMNS c " + 
                                         "where c.TABLE_NAME = '" + objTablaBE.Nombre + "' and c.TABLE_SCHEMA = '" + objTablaBE.Esquema + "'";
 
                 dr = command.ExecuteReader();

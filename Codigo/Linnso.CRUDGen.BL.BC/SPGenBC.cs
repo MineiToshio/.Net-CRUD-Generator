@@ -33,7 +33,7 @@ namespace Linnso.CRUDGen.BL.BC
             sp.WriteLine("GO");
             sp.WriteLine("");
             sp.WriteLine("-- =============================================");
-            sp.WriteLine("-- Author:	 Store Procedure Autogenerado Por CRUDGen");
+            sp.WriteLine("-- Author:	 Store procedure autogenerado Por CRUDGen");
             sp.WriteLine("-- Create date: " + DateTime.Now.Day + "/" + DateTime.Now.Month + "/" + DateTime.Now.Year + "");
 
             switch(modo)
@@ -51,7 +51,7 @@ namespace Linnso.CRUDGen.BL.BC
                     sp.WriteLine("-- Description: Inserta y/o actualizar un " + _objTablaBE.Nombre);
                     break;
                 case Modo.Seleccioar_X_ID:
-                    sp.WriteLine("-- Description: Obtiene un " + _objTablaBE.Nombre + "por su ID");
+                    sp.WriteLine("-- Description: Obtiene un " + _objTablaBE.Nombre + " por su ID");
                     break;
                 case Modo.Seleccionar:
                     sp.WriteLine("-- Description: Selecciona todos los elementos de la tabla " + _objTablaBE.Nombre);
