@@ -149,108 +149,111 @@ namespace Linnso.CRUDGen.PL.Win
 
                 foreach (DataGridViewRow r in dgvTablas.Rows)
                 {
-                    TablaBE objTablaBE = new TablaBE();
-                    objTablaBE.Nombre = r.Cells["Nombre"].Value.ToString();
-                    objTablaBE.Esquema = r.Cells["Esquema"].Value.ToString();
-                    objTablaBE.Nombre_Sin_Espacios = r.Cells["Nombre"].Value.ToString().Replace(" ", "_");
-
-                    List<ColumnaBE> lstColumnaBE = objSystemBC.Select_SQL_Columna(objConexionBE, objTablaBE);
-
-                    if ((bool)r.Cells["DALC"].Value == true)
+                    if ((bool)r.Cells["DALC"].Value == true || (bool)r.Cells["BC"].Value == true || (bool)r.Cells["BE"].Value == true || (bool)r.Cells["SP"].Value == true)
                     {
-                        CrearCarpeta(dir_dalc);
 
-                        String archivo_dalc = dir_dalc + "/" + objTablaBE.Nombre_Sin_Espacios + "DALC.cs";
-                        File.Create(archivo_dalc).Dispose();
+                        TablaBE objTablaBE = new TablaBE();
+                        objTablaBE.Nombre = r.Cells["Nombre"].Value.ToString();
+                        objTablaBE.Esquema = r.Cells["Esquema"].Value.ToString();
+                        objTablaBE.Nombre_Sin_Espacios = r.Cells["Nombre"].Value.ToString().Replace(" ", "_");
 
-                        DALCGenBC objDALCGen = new DALCGenBC();
-                        objDALCGen._Ruta = archivo_dalc;
-                        objDALCGen._DataSource = objConexionBE.DataSource;
-                        objDALCGen._Tool = chkGenerarTool.Checked;
-                        objDALCGen._Tag = txtCSTag.Text;
-                        objDALCGen._lstColumnaBE = lstColumnaBE;
-                        objDALCGen._objTablaBE = objTablaBE;
+                        List<ColumnaBE> lstColumnaBE = objSystemBC.Select_SQL_Columna(objConexionBE, objTablaBE);
 
-                        objDALCGen.GenerarHeader(txtNamespaceDALC.Text, txtNamespaceBE.Text);
-
-                        if (chkInsert.Checked) objDALCGen.GenerarInsert();
-                        if (chkUpdate.Checked) objDALCGen.GenerarUpdate();
-                        if (chkInsertUpdate.Checked) objDALCGen.GenerarInsertUpdate();
-                        if (chkSelect.Checked) objDALCGen.GenerarSelect();
-                        if (chkGet.Checked) objDALCGen.GenerarGet();
-                        if (chkDelete.Checked) objDALCGen.GenerarDelete();
-
-                        objDALCGen.GenerarFooter();
-                    }
-                    if ((bool)r.Cells["BC"].Value == true)
-                    {
-                        CrearCarpeta(dir_bc);
-
-                        String archivo_bc = dir_bc + "/" + objTablaBE.Nombre_Sin_Espacios + "BC.cs";
-                        File.Create(archivo_bc).Dispose();
-
-                        BCGenBC objBCGenBC = new BCGenBC();
-                        objBCGenBC._Ruta = archivo_bc;
-                        objBCGenBC._lstColumnaBE = lstColumnaBE;
-                        objBCGenBC._objTablaBE = objTablaBE;
-
-                        objBCGenBC.GenerarHeader(txtNamespaceBC.Text, txtNamespaceDALC.Text, txtNamespaceBE.Text);
-
-                        if (chkInsert.Checked) objBCGenBC.GenerarInsert();
-                        if (chkUpdate.Checked) objBCGenBC.GenerarUpdate();
-                        if (chkInsertUpdate.Checked) objBCGenBC.GenerarInsertUpdate();
-                        if (chkSelect.Checked) objBCGenBC.GenerarSelect();
-                        if (chkGet.Checked) objBCGenBC.GenerarGet();
-                        if (chkDelete.Checked) objBCGenBC.GenerarDelete();
-
-                        objBCGenBC.GenerarFooter();
-                    }
-                    if ((bool)r.Cells["BE"].Value == true)
-                    {
-                        CrearCarpeta(dir_be);
-
-                        String archivo_be = dir_be + "/" + objTablaBE.Nombre_Sin_Espacios + "BE.cs";
-                        File.Create(archivo_be).Dispose();
-
-                        BEGenBC objBEGenBC = new BEGenBC();
-                        objBEGenBC._Ruta = archivo_be;
-                        objBEGenBC._lstColumnaBE = lstColumnaBE;
-                        objBEGenBC._objTablaBE = objTablaBE;
-
-                        objBEGenBC.GenerarHeader(txtNamespaceBE.Text);
-                        objBEGenBC.GenerarClase();
-                        objBEGenBC.GenerarFooter();
-                    }
-                    if ((bool)r.Cells["SP"].Value == true)
-                    {
-                        CrearCarpeta(dir_sp);
-
-                        String archivo_sp = dir_sp + "/script.sql";
-                        if(!File.Exists(archivo_sp))
-                            File.Create(archivo_sp).Dispose();
-
-                        SPGenBC objSPGenBC = new SPGenBC();
-                        objSPGenBC._DataSource = objConexionBE.DataSource;
-                        objSPGenBC._lstColumnaBE = lstColumnaBE;
-                        objSPGenBC._objTablaBE = objTablaBE;
-                        objSPGenBC._Ruta = archivo_sp;
-                        objSPGenBC._DataBase = objConexionBE.DataBase;
-
-                        if (!sp_header)
+                        if ((bool)r.Cells["DALC"].Value == true)
                         {
-                            objSPGenBC.GenerarHeader();
-                            sp_header = true;
-                        }
+                            CrearCarpeta(dir_dalc);
 
-                        if (chkInsert.Checked) objSPGenBC.GenerarInsert();
-                        if (chkUpdate.Checked) objSPGenBC.GenerarUpdate();
-                        if (chkInsertUpdate.Checked) objSPGenBC.GenerarInsertUpdate();
-                        if (chkSelect.Checked) objSPGenBC.GenerarSelect();
-                        if (chkGet.Checked) objSPGenBC.GenerarGet();
-                        if (chkDelete.Checked) objSPGenBC.GenerarDelete();
+                            String archivo_dalc = dir_dalc + "/" + objTablaBE.Nombre_Sin_Espacios + "DALC.cs";
+                            File.Create(archivo_dalc).Dispose();
+
+                            DALCGenBC objDALCGen = new DALCGenBC();
+                            objDALCGen._Ruta = archivo_dalc;
+                            objDALCGen._DataSource = objConexionBE.DataSource;
+                            objDALCGen._Tool = chkGenerarTool.Checked;
+                            objDALCGen._Tag = txtCSTag.Text;
+                            objDALCGen._lstColumnaBE = lstColumnaBE;
+                            objDALCGen._objTablaBE = objTablaBE;
+
+                            objDALCGen.GenerarHeader(txtNamespaceDALC.Text, txtNamespaceBE.Text);
+
+                            if (chkInsert.Checked) objDALCGen.GenerarInsert();
+                            if (chkUpdate.Checked) objDALCGen.GenerarUpdate();
+                            if (chkInsertUpdate.Checked) objDALCGen.GenerarInsertUpdate();
+                            if (chkSelect.Checked) objDALCGen.GenerarSelect();
+                            if (chkGet.Checked) objDALCGen.GenerarGet();
+                            if (chkDelete.Checked) objDALCGen.GenerarDelete();
+
+                            objDALCGen.GenerarFooter();
+                        }
+                        if ((bool)r.Cells["BC"].Value == true)
+                        {
+                            CrearCarpeta(dir_bc);
+
+                            String archivo_bc = dir_bc + "/" + objTablaBE.Nombre_Sin_Espacios + "BC.cs";
+                            File.Create(archivo_bc).Dispose();
+
+                            BCGenBC objBCGenBC = new BCGenBC();
+                            objBCGenBC._Ruta = archivo_bc;
+                            objBCGenBC._lstColumnaBE = lstColumnaBE;
+                            objBCGenBC._objTablaBE = objTablaBE;
+
+                            objBCGenBC.GenerarHeader(txtNamespaceBC.Text, txtNamespaceDALC.Text, txtNamespaceBE.Text);
+
+                            if (chkInsert.Checked) objBCGenBC.GenerarInsert();
+                            if (chkUpdate.Checked) objBCGenBC.GenerarUpdate();
+                            if (chkInsertUpdate.Checked) objBCGenBC.GenerarInsertUpdate();
+                            if (chkSelect.Checked) objBCGenBC.GenerarSelect();
+                            if (chkGet.Checked) objBCGenBC.GenerarGet();
+                            if (chkDelete.Checked) objBCGenBC.GenerarDelete();
+
+                            objBCGenBC.GenerarFooter();
+                        }
+                        if ((bool)r.Cells["BE"].Value == true)
+                        {
+                            CrearCarpeta(dir_be);
+
+                            String archivo_be = dir_be + "/" + objTablaBE.Nombre_Sin_Espacios + "BE.cs";
+                            File.Create(archivo_be).Dispose();
+
+                            BEGenBC objBEGenBC = new BEGenBC();
+                            objBEGenBC._Ruta = archivo_be;
+                            objBEGenBC._lstColumnaBE = lstColumnaBE;
+                            objBEGenBC._objTablaBE = objTablaBE;
+
+                            objBEGenBC.GenerarHeader(txtNamespaceBE.Text);
+                            objBEGenBC.GenerarClase();
+                            objBEGenBC.GenerarFooter();
+                        }
+                        if ((bool)r.Cells["SP"].Value == true)
+                        {
+                            CrearCarpeta(dir_sp);
+
+                            String archivo_sp = dir_sp + "/script.sql";
+                            if (!File.Exists(archivo_sp))
+                                File.Create(archivo_sp).Dispose();
+
+                            SPGenBC objSPGenBC = new SPGenBC();
+                            objSPGenBC._DataSource = objConexionBE.DataSource;
+                            objSPGenBC._lstColumnaBE = lstColumnaBE;
+                            objSPGenBC._objTablaBE = objTablaBE;
+                            objSPGenBC._Ruta = archivo_sp;
+                            objSPGenBC._DataBase = objConexionBE.DataBase;
+
+                            if (!sp_header)
+                            {
+                                objSPGenBC.GenerarHeader();
+                                sp_header = true;
+                            }
+
+                            if (chkInsert.Checked) objSPGenBC.GenerarInsert();
+                            if (chkUpdate.Checked) objSPGenBC.GenerarUpdate();
+                            if (chkInsertUpdate.Checked) objSPGenBC.GenerarInsertUpdate();
+                            if (chkSelect.Checked) objSPGenBC.GenerarSelect();
+                            if (chkGet.Checked) objSPGenBC.GenerarGet();
+                            if (chkDelete.Checked) objSPGenBC.GenerarDelete();
+                        }
                     }
                 }
-
                 if (chkGenerarTool.Checked)
                 {
                     CrearCarpeta(dir_dalc);

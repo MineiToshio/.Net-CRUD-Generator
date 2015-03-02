@@ -84,6 +84,9 @@
     <EmbeddedResource Include="frmAccesoBD.resx">
       <DependentUpon>frmAccesoBD.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmConfiguracion.resx">
+      <DependentUpon>frmConfiguracion.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmCRUDGenerator.resx">
       <DependentUpon>frmCRUDGenerator.cs</DependentUpon>
     </EmbeddedResource>
@@ -118,6 +121,9 @@
       <Project>{77BC1993-6F63-4A30-B836-FD3250621AE5}</Project>
       <Name>Linnso.CRUDGen.BL.BE</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="datos\config.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

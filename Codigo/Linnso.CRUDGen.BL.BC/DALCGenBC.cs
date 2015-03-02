@@ -473,7 +473,7 @@ namespace Linnso.CRUDGen.BL.BC
                             dalc.WriteLine("                                obj" + _objTablaBE.Nombre_Sin_Espacios + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = dr[\"" + c.Nombre + "\"] != DBNull.Value ? (" + ToolBC.TypeFromSQL(c.Tipo_Dato) + "?)dr[\"" + c.Nombre + "\"]" + " : null;");
                             break;
                         default:
-                            dalc.WriteLine("                                obj" + _objTablaBE.Nombre_Sin_Espacios + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = " + ToolBC.ConvertFromSQLNULL(c.Tipo_Dato, c.Nombre));
+                            dalc.WriteLine("                                obj" + _objTablaBE.Nombre_Sin_Espacios + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = " + ToolBC.ConvertFromSQLNULL(c.Tipo_Dato, c.Nombre) + ";");
                             break;
                     }
                 }

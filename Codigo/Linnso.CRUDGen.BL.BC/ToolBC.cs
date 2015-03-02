@@ -322,7 +322,7 @@ namespace Linnso.CRUDGen.BL.BC
         {
             Boolean acepta_null = false;
 
-            if (clase.Equals("String")
+            if (clase.ToLower().Equals("string")
                 || clase.Contains("[]"))
                 acepta_null = true;
 

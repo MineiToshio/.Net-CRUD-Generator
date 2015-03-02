@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace Linnso.CRUDGen.PL.Win
 {
@@ -16,6 +17,7 @@ namespace Linnso.CRUDGen.PL.Win
         public frmConfiguracion()
         {
             InitializeComponent();
+            CargarDatos();
         }
 
         public static frmConfiguracion GetInstance()
@@ -23,6 +25,12 @@ namespace Linnso.CRUDGen.PL.Win
             if (objInstance == null)
                 objInstance = new frmConfiguracion();
             return objInstance;
+        }
+
+        private void CargarDatos()
+        {
+            string path = Application.StartupPath + @"\datos\config.xml";
+            var doc = XDocument.Load(path);
         }
     }
 }

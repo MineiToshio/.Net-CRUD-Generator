@@ -111,7 +111,7 @@ namespace Linnso.CRUDGen.DL.DALC
                                         "case when columnproperty(object_id(c.table_name), c.column_name,'IsIdentity') = 1 then 'YES' else 'NO' end 'IS_IDENTITY', " +
                                         "c.CHARACTER_MAXIMUM_LENGTH, " +
                                         "c.NUMERIC_PRECISION, " +
-                                        "c.NUMERIC_PRECISION_RADIX " + 
+                                        "c.NUMERIC_SCALE " + 
                                         "FROM INFORMATION_SCHEMA.COLUMNS c " + 
                                         "where c.TABLE_NAME = '" + objTablaBE.Nombre + "' and c.TABLE_SCHEMA = '" + objTablaBE.Esquema + "'";
 
@@ -127,7 +127,7 @@ namespace Linnso.CRUDGen.DL.DALC
                     objColumnaBE.Es_Identity = dr["IS_IDENTITY"].ToString().Equals("NO") ? false : true;
                     objColumnaBE.Tamano_Maximo = dr["CHARACTER_MAXIMUM_LENGTH"] != DBNull.Value ? Convert.ToInt32(dr["CHARACTER_MAXIMUM_LENGTH"]) : -1;
                     objColumnaBE.Precision_Numerica = dr["NUMERIC_PRECISION"] != DBNull.Value ? Convert.ToInt32(dr["NUMERIC_PRECISION"]) : -1;
-                    objColumnaBE.Precision_Numerica_Base = dr["NUMERIC_PRECISION_RADIX"] != DBNull.Value ? Convert.ToInt32(dr["NUMERIC_PRECISION_RADIX"]) : -1;
+                    objColumnaBE.Precision_Numerica_Base = dr["NUMERIC_SCALE"] != DBNull.Value ? Convert.ToInt32(dr["NUMERIC_SCALE"]) : -1;
                     lstColumnaBE.Add(objColumnaBE);
                 }
 
