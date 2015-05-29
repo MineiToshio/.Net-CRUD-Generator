@@ -24,7 +24,6 @@ namespace Linnso.CRUDGen.PL.Win
         {
             InitializeComponent();
             LlenarDataSource();
-            
         }
 
         public void ServerFocus()
@@ -44,7 +43,7 @@ namespace Linnso.CRUDGen.PL.Win
             var items = new BindingList<KeyValuePair<string, string>>();
 
             items.Add(new KeyValuePair<string, string>("1", "Microsoft SQL Server"));
-            //items.Add(new KeyValuePair<string, string>("2", "Oracle MySQL Server"));
+            items.Add(new KeyValuePair<string, string>("2", "Oracle MySQL Server"));
 
             cmbDataSource.DataSource = items;
             cmbDataSource.ValueMember = "Key";
@@ -68,6 +67,9 @@ namespace Linnso.CRUDGen.PL.Win
                     {
                         case (int)DataSource.SQLServer:
                             lstBD = objSystemBC.Select_SQL_Databases(objConexionBE);
+                            break;
+                        case (int)DataSource.MySQL:
+                            lstBD = objSystemBC.Select_MySQL_Databases(objConexionBE);
                             break;
                     }
 
@@ -188,6 +190,29 @@ namespace Linnso.CRUDGen.PL.Win
             objfrmTablasBD.Show();
             objfrmTablasBD.LlenarGrilla();
             this.Hide();
+        }
+
+        private void cmbDataSource_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int valor;
+            bool esNumero = int.TryParse(cmbDataSource.SelectedValue.ToString(), out valor);
+
+            if (esNumero)
+            {
+                switch (Convert.ToInt32(valor))
+                {
+                    case (int)DataSource.SQLServer:
+                        rbWindows.Enabled = true;
+                        rbWindows.Checked = true;
+                        rbSQL.Checked = false;
+                        break;
+                    case (int)DataSource.MySQL:
+                        rbWindows.Enabled = false;
+                        rbSQL.Checked = true;
+                        txtUsuario.Focus();
+                        break;
+                }
+            }
         }
     }
 }

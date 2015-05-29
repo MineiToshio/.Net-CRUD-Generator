@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<configuracion>
+  <postname nombre="BC" valor="BL.BC"></postname>
+  <postname nombre="BE" valor="BL.BE"></postname>
+  <postname nombre="DALC" valor="DL.DALC"></postname>
+  <auditoria nombre="UsuarioCreacion" valor="id_usuario_creacion"></auditoria>
+  <auditoria nombre="UsuarioModificacion" valor="id_usuario_modificacion"></auditoria>
+  <auditoria nombre="FechaCreacion" valor="fecha_creacion"></auditoria>
+  <auditoria nombre="FechaModificacion" valor="fecha_modificacion"></auditoria>
+</configuracion>

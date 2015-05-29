@@ -11,6 +11,7 @@ namespace Linnso.CRUDGen.BL.BC
     {
         SystemDALC objSystemDALC = new SystemDALC();
 
+        #region SQL
         public List<String> Select_SQL_Databases(ConexionBE objConexionBE)
         {
             try
@@ -45,9 +46,50 @@ namespace Linnso.CRUDGen.BL.BC
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+        #endregion
+
+        #region MySQL
+        public List<String> Select_MySQL_Databases(ConexionBE objConexionBE)
+        {
+            try
+            {
+                return objSystemDALC.Select_MySQL_Databases(objConexionBE);
+            }
+            catch (Exception)
+            {
 
                 throw;
             }
         }
+
+        public List<TablaBE> Select_MySQL_Table(ConexionBE objConexionBE)
+        {
+            try
+            {
+                return objSystemDALC.Select_MySQL_Table(objConexionBE);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public List<ColumnaBE> Select_MySQL_Columna(ConexionBE objConexionBE, TablaBE objTablaBE)
+        {
+            try
+            {
+                return objSystemDALC.Select_MySQL_Columna(objConexionBE, objTablaBE);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        #endregion
     }
 }

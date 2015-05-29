@@ -42,7 +42,7 @@ namespace Linnso.CRUDGen.BL.BC
         {
             StreamWriter be = File.AppendText(_Ruta);
 
-            be.WriteLine("    public class " + _objTablaBE.Nombre_Sin_Espacios + "BE");
+            be.WriteLine("    public class " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE");
             be.WriteLine("    {");
             foreach(ColumnaBE c in _lstColumnaBE)
                 be.WriteLine("        public " + ToolBC.TypeFromSQL(c.Tipo_Dato) + (c.Acepta_Nulos && !ToolBC.ClaseNull(ToolBC.TypeFromSQL(c.Tipo_Dato)) ? "?" : "") + " " + ToolBC.StandarizarNombreClase(c.Nombre) + " { get; set; }");
@@ -55,7 +55,7 @@ namespace Linnso.CRUDGen.BL.BC
         {
             StreamWriter be = File.AppendText(_Ruta);
 
-            be.WriteLine("    public " + _objTablaBE.Nombre_Sin_Espacios + "BE()");
+            be.WriteLine("    public " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE()");
             be.WriteLine("    { }");
 
             be.Close();

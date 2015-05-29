@@ -34,6 +34,7 @@ namespace Linnso.CRUDGen.PL.Win
             frmConfiguracion form = frmConfiguracion.GetInstance();
             form.MdiParent = this;
             form.Show();
+            form.CargarDatos();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

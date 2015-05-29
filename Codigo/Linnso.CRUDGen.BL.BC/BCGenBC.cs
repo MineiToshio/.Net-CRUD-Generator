@@ -27,9 +27,9 @@ namespace Linnso.CRUDGen.BL.BC
             bc.WriteLine("");
             bc.WriteLine("namespace " + nsBC);
             bc.WriteLine("{");
-            bc.WriteLine("    public class " + _objTablaBE.Nombre_Sin_Espacios + "BC");
+            bc.WriteLine("    public class " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BC");
             bc.WriteLine("    {");
-            bc.WriteLine("        " + _objTablaBE.Nombre_Sin_Espacios + "DALC obj" + _objTablaBE.Nombre_Sin_Espacios + "DALC = new " + _objTablaBE.Nombre_Sin_Espacios + "DALC();");
+            bc.WriteLine("        " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "DALC obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "DALC = new " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "DALC();");
             bc.WriteLine("");
 
             bc.Close();
@@ -53,11 +53,11 @@ namespace Linnso.CRUDGen.BL.BC
             {
                 int n_identity = (from c in _lstColumnaBE where c.Es_Identity select c).Count();
 
-                bc.WriteLine("        public " + (n_identity == 1 ? "int" : "void") + " Insert_" + _objTablaBE.Nombre_Sin_Espacios + "(" + _objTablaBE.Nombre_Sin_Espacios + "BE obj" + _objTablaBE.Nombre_Sin_Espacios + "BE)");
+                bc.WriteLine("        public " + (n_identity == 1 ? "int" : "void") + " Insert_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE)");
                 bc.WriteLine("        {");
                 bc.WriteLine("            try");
                 bc.WriteLine("            {");
-                bc.WriteLine("                " + (n_identity == 1 ? "return " : "") + "obj" + _objTablaBE.Nombre_Sin_Espacios + "DALC.Insert_" + _objTablaBE.Nombre_Sin_Espacios + "(obj" + _objTablaBE.Nombre_Sin_Espacios + "BE);");
+                bc.WriteLine("                " + (n_identity == 1 ? "return " : "") + "obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "DALC.Insert_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE);");
                 bc.WriteLine("            }");
                 bc.WriteLine("            catch(Exception)");
                 bc.WriteLine("            {");
@@ -85,11 +85,11 @@ namespace Linnso.CRUDGen.BL.BC
 
                 try
                 {
-                    bc.WriteLine("        public void Update_" + _objTablaBE.Nombre_Sin_Espacios + "(" + _objTablaBE.Nombre_Sin_Espacios + "BE obj" + _objTablaBE.Nombre_Sin_Espacios + "BE)");
+                    bc.WriteLine("        public void Update_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE)");
                     bc.WriteLine("        {");
                     bc.WriteLine("            try");
                     bc.WriteLine("            {");
-                    bc.WriteLine("                obj" + _objTablaBE.Nombre_Sin_Espacios + "DALC.Update_" + _objTablaBE.Nombre_Sin_Espacios + "(obj" + _objTablaBE.Nombre_Sin_Espacios + "BE);");
+                    bc.WriteLine("                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "DALC.Update_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE);");
                     bc.WriteLine("            }");
                     bc.WriteLine("            catch(Exception)");
                     bc.WriteLine("            {");
@@ -120,11 +120,11 @@ namespace Linnso.CRUDGen.BL.BC
                 {
                     int n_identity = (from c in _lstColumnaBE where c.Es_Identity select c).Count();
 
-                    bc.WriteLine("        public " + (n_identity == 1 ? "int" : "void") + " Insert_Update_" + _objTablaBE.Nombre_Sin_Espacios + "(" + _objTablaBE.Nombre_Sin_Espacios + "BE obj" + _objTablaBE.Nombre_Sin_Espacios + "BE)");
+                    bc.WriteLine("        public " + (n_identity == 1 ? "int" : "void") + " Insert_Update_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE)");
                     bc.WriteLine("        {");
                     bc.WriteLine("            try");
                     bc.WriteLine("            {");
-                    bc.WriteLine("                " + (n_identity == 1 ? "return " : "") + "obj" + _objTablaBE.Nombre_Sin_Espacios + "DALC.Insert_Update_" + _objTablaBE.Nombre_Sin_Espacios + "(obj" + _objTablaBE.Nombre_Sin_Espacios + "BE);");
+                    bc.WriteLine("                " + (n_identity == 1 ? "return " : "") + "obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "DALC.Insert_Update_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE);");
                     bc.WriteLine("            }");
                     bc.WriteLine("            catch(Exception)");
                     bc.WriteLine("            {");
@@ -148,11 +148,11 @@ namespace Linnso.CRUDGen.BL.BC
 
             try
             {
-                bc.WriteLine("        public void Delete_" + _objTablaBE.Nombre_Sin_Espacios + "(" + ToolBC.KeyParametersSQL(_lstColumnaBE) + ")");
+                bc.WriteLine("        public void Delete_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParametersSQL(_lstColumnaBE) + ")");
                 bc.WriteLine("        {");
                 bc.WriteLine("            try");
                 bc.WriteLine("            {");
-                bc.WriteLine("                obj" + _objTablaBE.Nombre_Sin_Espacios + "DALC.Delete_" + _objTablaBE.Nombre_Sin_Espacios + "(" + ToolBC.KeyVariables(_lstColumnaBE) + ");");
+                bc.WriteLine("                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "DALC.Delete_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyVariables(_lstColumnaBE) + ");");
                 bc.WriteLine("            }");
                 bc.WriteLine("            catch(Exception)");
                 bc.WriteLine("            {");
@@ -175,11 +175,11 @@ namespace Linnso.CRUDGen.BL.BC
 
             try
             {
-                bc.WriteLine("        public List<" + _objTablaBE.Nombre_Sin_Espacios + "BE> Select_" + _objTablaBE.Nombre_Sin_Espacios + "()");
+                bc.WriteLine("        public List<" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE> Select_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "()");
                 bc.WriteLine("        {");
                 bc.WriteLine("            try");
                 bc.WriteLine("            {");
-                bc.WriteLine("                return obj" + _objTablaBE.Nombre_Sin_Espacios + "DALC.Select_" + _objTablaBE.Nombre_Sin_Espacios + "();");
+                bc.WriteLine("                return obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "DALC.Select_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "();");
                 bc.WriteLine("            }");
                 bc.WriteLine("            catch(Exception)");
                 bc.WriteLine("            {");
@@ -202,11 +202,11 @@ namespace Linnso.CRUDGen.BL.BC
 
             try
             {
-                bc.WriteLine("        public " + _objTablaBE.Nombre_Sin_Espacios + "BE Get_" + _objTablaBE.Nombre_Sin_Espacios + "(" + ToolBC.KeyParametersSQL(_lstColumnaBE) + ")");
+                bc.WriteLine("        public " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE Get_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParametersSQL(_lstColumnaBE) + ")");
                 bc.WriteLine("        {");
                 bc.WriteLine("            try");
                 bc.WriteLine("            {");
-                bc.WriteLine("                return obj" + _objTablaBE.Nombre_Sin_Espacios + "DALC.Get_" + _objTablaBE.Nombre_Sin_Espacios + "(" + ToolBC.KeyVariables(_lstColumnaBE) + ");");
+                bc.WriteLine("                return obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "DALC.Get_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyVariables(_lstColumnaBE) + ");");
                 bc.WriteLine("            }");
                 bc.WriteLine("            catch(Exception)");
                 bc.WriteLine("            {");
