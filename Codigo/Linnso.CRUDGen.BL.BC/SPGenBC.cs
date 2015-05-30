@@ -14,6 +14,10 @@ namespace Linnso.CRUDGen.BL.BC
         public TablaBE _objTablaBE { get; set; }
         public List<ColumnaBE> _lstColumnaBE { get; set; }
         public String _DataBase { get; set; }
+        public string _CampoUsuarioCreacion { get; set; }
+        public string _CampoUsuarioModificacion { get; set; }
+        public string _CampoFechaCreacion { get; set; }
+        public string _CampoFechaModificacion { get; set; }
 
         public void GenerarHeader()
         {
@@ -24,7 +28,7 @@ namespace Linnso.CRUDGen.BL.BC
             }
         }
 
-        public void GenerarHeaderSP(StreamWriter sp, Modo modo)
+        public void SQLGenerarHeaderSP(StreamWriter sp, Modo modo)
         {
             sp.WriteLine("GO");
             sp.WriteLine("SET ANSI_NULLS ON");
@@ -61,7 +65,7 @@ namespace Linnso.CRUDGen.BL.BC
             sp.WriteLine("-- =============================================");
         }
 
-        public void GenerarInsert()
+        public void SQLGenerarInsert()
         {
             int n_identity = (from c in _lstColumnaBE where c.Es_Identity select c).Count();
             int n_no_identity = (from c in _lstColumnaBE where !c.Es_Identity select c).Count();
@@ -69,14 +73,23 @@ namespace Linnso.CRUDGen.BL.BC
 
             using (StreamWriter sp = File.AppendText(_Ruta))
             {
-                GenerarHeaderSP(sp, Modo.Insertar);
+                SQLGenerarHeaderSP(sp, Modo.Insertar);
                 
                 sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Insert] (");
+
+                var creador = from c in _lstColumnaBE where c.Nombre == _CampoUsuarioCreacion select c;
+
                 foreach(ColumnaBE c in _lstColumnaBE)
                 {
-                    if (!c.Es_Identity)
+                    if (!c.Es_Identity && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion)
                     {
-                        sp.WriteLine("    @" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (c.Acepta_Nulos ? " = null" : "") + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        if (c.Nombre != _CampoUsuarioModificacion)
+                            sp.WriteLine("    @" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (c.Acepta_Nulos ? " = null" : "") + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        else
+                        {
+                            if(creador.Count() == 0) //existe campo creador
+                                sp.WriteLine("    @" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (c.Acepta_Nulos ? " = null" : "") + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        }
                         n_iteraciones++;
                     }
                 }
@@ -89,6 +102,7 @@ namespace Linnso.CRUDGen.BL.BC
                 sp.WriteLine("    insert into [" + _objTablaBE.Esquema  + "].[" + _objTablaBE.Nombre + "]");
                 sp.WriteLine("    (");
                 n_iteraciones = 0;
+                
                 foreach (ColumnaBE c in _lstColumnaBE)
                 {
                     if (!c.Es_Identity)
@@ -105,7 +119,17 @@ namespace Linnso.CRUDGen.BL.BC
                 {
                     if (!c.Es_Identity)
                     {
-                        sp.WriteLine("        @" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        if (c.Nombre == _CampoFechaCreacion || c.Nombre == _CampoFechaModificacion)
+                            sp.WriteLine("        GETUTCDATE()" + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        else if (c.Nombre == _CampoUsuarioModificacion)
+                        {
+                            if(creador.Count() > 0) //Existe usuario creación
+                                sp.WriteLine("        @" + ToolBC.StandarizarNombreParametro(_CampoUsuarioCreacion) + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                            else
+                                sp.WriteLine("        @" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        }
+                        else
+                            sp.WriteLine("        @" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_no_identity - 1 ? "," : ""));
                         n_iteraciones++;
                     }
                 }
@@ -121,7 +145,7 @@ namespace Linnso.CRUDGen.BL.BC
             }
         }
 
-        public void GenerarUpdate()
+        public void SQLGenerarUpdate()
         {
             int n_no_pk = (from c in _lstColumnaBE where !c.Es_PK select c).Count();
             int n_pk = (from c in _lstColumnaBE where c.Es_PK select c).Count();
@@ -132,7 +156,7 @@ namespace Linnso.CRUDGen.BL.BC
 
                 using (StreamWriter sp = File.AppendText(_Ruta))
                 {
-                    GenerarHeaderSP(sp, Modo.Actualizar);
+                    SQLGenerarHeaderSP(sp, Modo.Actualizar);
                     sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Update] (");
                     foreach (ColumnaBE c in _lstColumnaBE)
                     {
@@ -173,7 +197,7 @@ namespace Linnso.CRUDGen.BL.BC
             }
         }
 
-        public void GenerarInsertUpdate()
+        public void SQLGenerarInsertUpdate()
         {
             int n_no_pk = (from c in _lstColumnaBE where !c.Es_PK select c).Count();
             int n_pk = (from c in _lstColumnaBE where c.Es_PK select c).Count();
@@ -186,7 +210,7 @@ namespace Linnso.CRUDGen.BL.BC
 
                 using (StreamWriter sp = File.AppendText(_Ruta))
                 {
-                    GenerarHeaderSP(sp, Modo.Insertar_Actualizar);
+                    SQLGenerarHeaderSP(sp, Modo.Insertar_Actualizar);
                     sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Insert_Update] (");
                     foreach (ColumnaBE c in _lstColumnaBE)
                     {
@@ -293,7 +317,7 @@ namespace Linnso.CRUDGen.BL.BC
             }
         }
 
-        public void GenerarDelete()
+        public void SQLGenerarDelete()
         {
             int n_iteraciones = 0;
             int n_pk = (from c in _lstColumnaBE where c.Es_PK select c).Count();
@@ -301,7 +325,7 @@ namespace Linnso.CRUDGen.BL.BC
 
             using (StreamWriter sp = File.AppendText(_Ruta))
             {
-                GenerarHeaderSP(sp, Modo.Eliminar);
+                SQLGenerarHeaderSP(sp, Modo.Eliminar);
                 sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Delete] (");
                 foreach (ColumnaBE c in _lstColumnaBE)
                 {
@@ -334,14 +358,14 @@ namespace Linnso.CRUDGen.BL.BC
             }
         }
 
-        public void GenerarSelect()
+        public void SQLGenerarSelect()
         {
             String inicial_tabla = _objTablaBE.Nombre.First().ToString().ToLower();
             bool primero = true;
 
             using (StreamWriter sp = File.AppendText(_Ruta))
             {
-                GenerarHeaderSP(sp, Modo.Seleccionar);
+                SQLGenerarHeaderSP(sp, Modo.Seleccionar);
                 sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Select]");
                 sp.WriteLine("AS");
                 sp.WriteLine("BEGIN");
@@ -361,7 +385,7 @@ namespace Linnso.CRUDGen.BL.BC
             }
         }
 
-        public void GenerarGet()
+        public void SQLGenerarGet()
         {
             String inicial_tabla = _objTablaBE.Nombre.First().ToString().ToLower();
             bool primero = true;
@@ -371,7 +395,7 @@ namespace Linnso.CRUDGen.BL.BC
 
             using (StreamWriter sp = File.AppendText(_Ruta))
             {
-                GenerarHeaderSP(sp, Modo.Seleccioar_X_ID);
+                SQLGenerarHeaderSP(sp, Modo.Seleccioar_X_ID);
                 sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Get](");
                 foreach (ColumnaBE c in _lstColumnaBE)
                 {

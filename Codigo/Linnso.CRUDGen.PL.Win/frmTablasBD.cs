@@ -158,6 +158,9 @@ namespace Linnso.CRUDGen.PL.Win
                     nsBC = txtPreNamespace.Text + "." + nsBC;
                     nsBE = txtPreNamespace.Text + "." + nsBE;
 
+                    string usuarioCreacion, usuarioModificacion, fechaCreacion, fechaModificacion;
+                    Tools.GetCamposAuditoria(out usuarioCreacion, out usuarioModificacion, out fechaCreacion, out fechaModificacion);
+
                     foreach (DataGridViewRow r in dgvTablas.Rows)
                     {
                         if ((bool)r.Cells["DALC"].Value == true || (bool)r.Cells["BC"].Value == true || (bool)r.Cells["BE"].Value == true || (bool)r.Cells["SP"].Value == true)
@@ -194,15 +197,19 @@ namespace Linnso.CRUDGen.PL.Win
                                 objDALCGen._Tag = txtCSTag.Text;
                                 objDALCGen._lstColumnaBE = lstColumnaBE;
                                 objDALCGen._objTablaBE = objTablaBE;
+                                objDALCGen._CampoUsuarioCreacion = usuarioCreacion;
+                                objDALCGen._CampoUsuarioModificacion = usuarioModificacion;
+                                objDALCGen._CampoFechaCreacion = fechaCreacion;
+                                objDALCGen._CampoFechaModificacion = fechaModificacion;
 
                                 objDALCGen.GenerarHeader(nsDALC, nsBE);
 
-                                if (chkInsert.Checked) objDALCGen.GenerarInsert();
-                                if (chkUpdate.Checked) objDALCGen.GenerarUpdate();
-                                if (chkInsertUpdate.Checked) objDALCGen.GenerarInsertUpdate();
-                                if (chkSelect.Checked) objDALCGen.GenerarSelect();
-                                if (chkGet.Checked) objDALCGen.GenerarGet();
-                                if (chkDelete.Checked) objDALCGen.GenerarDelete();
+                                if (chkInsert.Checked) objDALCGen.SQLGenerarInsert();
+                                if (chkUpdate.Checked) objDALCGen.SQLGenerarUpdate();
+                                if (chkInsertUpdate.Checked) objDALCGen.SQLGenerarInsertUpdate();
+                                if (chkSelect.Checked) objDALCGen.SQLGenerarSelect();
+                                if (chkGet.Checked) objDALCGen.SQLGenerarGet();
+                                if (chkDelete.Checked) objDALCGen.SQLGenerarDelete();
 
                                 objDALCGen.GenerarFooter();
                             }
@@ -259,6 +266,10 @@ namespace Linnso.CRUDGen.PL.Win
                                 objSPGenBC._objTablaBE = objTablaBE;
                                 objSPGenBC._Ruta = archivo_sp;
                                 objSPGenBC._DataBase = objConexionBE.DataBase;
+                                objSPGenBC._CampoUsuarioCreacion = usuarioCreacion;
+                                objSPGenBC._CampoUsuarioModificacion = usuarioModificacion;
+                                objSPGenBC._CampoFechaCreacion = fechaCreacion;
+                                objSPGenBC._CampoFechaModificacion = fechaModificacion;
 
                                 if (!sp_header)
                                 {
@@ -266,12 +277,12 @@ namespace Linnso.CRUDGen.PL.Win
                                     sp_header = true;
                                 }
 
-                                if (chkInsert.Checked) objSPGenBC.GenerarInsert();
-                                if (chkUpdate.Checked) objSPGenBC.GenerarUpdate();
-                                if (chkInsertUpdate.Checked) objSPGenBC.GenerarInsertUpdate();
-                                if (chkSelect.Checked) objSPGenBC.GenerarSelect();
-                                if (chkGet.Checked) objSPGenBC.GenerarGet();
-                                if (chkDelete.Checked) objSPGenBC.GenerarDelete();
+                                if (chkInsert.Checked) objSPGenBC.SQLGenerarInsert();
+                                if (chkUpdate.Checked) objSPGenBC.SQLGenerarUpdate();
+                                if (chkInsertUpdate.Checked) objSPGenBC.SQLGenerarInsertUpdate();
+                                if (chkSelect.Checked) objSPGenBC.SQLGenerarSelect();
+                                if (chkGet.Checked) objSPGenBC.SQLGenerarGet();
+                                if (chkDelete.Checked) objSPGenBC.SQLGenerarDelete();
                             }
                         }
                     }

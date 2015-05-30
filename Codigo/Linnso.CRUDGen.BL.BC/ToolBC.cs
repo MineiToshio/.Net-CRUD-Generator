@@ -9,6 +9,7 @@ namespace Linnso.CRUDGen.BL.BC
 {
     public class ToolBC
     {
+        #region SQL Server
         public static String TypeFromSQL(String SqlType)
         {
             switch (SqlType.ToLower())
@@ -80,27 +81,6 @@ namespace Linnso.CRUDGen.BL.BC
             }
         }
 
-        public static String StandarizarNombreClase(String nombre)
-        {
-            nombre = nombre.Replace(" ", "_");
-            String[] separado = nombre.Split('_');
-            String nombre_estandarizado = "";
-
-            foreach (String s in separado)
-            {
-                nombre_estandarizado += char.ToUpper(s[0]) + s.Substring(1) + "_";
-            }
-            nombre_estandarizado = nombre_estandarizado.TrimEnd('_');
-
-            return nombre_estandarizado;
-        }
-
-        public static String StandarizarNombreParametro(String nombre)
-        {
-            nombre = nombre.ToLower().Replace(" ", "_");
-            return nombre;
-        }
-
         public static String KeyParametersSQL(List<ColumnaBE> lstColumnaBE)
         {
             String parametros = "";
@@ -114,22 +94,6 @@ namespace Linnso.CRUDGen.BL.BC
             if(!String.IsNullOrEmpty(parametros))
                 parametros = parametros.Substring(0, parametros.Length - 2);
             
-            return parametros;
-        }
-
-        public static String KeyVariables(List<ColumnaBE> lstColumnaBE)
-        {
-            String parametros = "";
-
-            foreach (ColumnaBE c in lstColumnaBE)
-            {
-                if (c.Es_PK)
-                    parametros += StandarizarNombreParametro(c.Nombre) + ", ";
-            }
-
-            if (!String.IsNullOrEmpty(parametros))
-                parametros = parametros.Substring(0, parametros.Length - 2);
-
             return parametros;
         }
 
@@ -175,10 +139,10 @@ namespace Linnso.CRUDGen.BL.BC
                     return "dr[\"" + variable + "\"] as double?";
 
                 case "int":
-                    return "dr[\"" + variable + "\"] as int?";
+                    return "dr[\"" + variable + "\"] as int?"; 
 
                 case "real":
-                    return "dr.GetFloat(dr.GetOrdinal(\"" + variable + "\"))";
+                    return "dr[\"" + variable + "\"] as float?";
 
                 case "uniqueidentifier":
                     return "dr.GetGuid(dr.GetOrdinal(\"" + variable + "\"))";
@@ -197,7 +161,7 @@ namespace Linnso.CRUDGen.BL.BC
                     return "DataTable";
 
                 case "datetimeoffset":
-                    return "DateTimeOffset.Parse(dr[\"" + variable + "\"])";
+                    return "dr[\"" + variable + "\"] as DateTimeOffset?";
 
                 default:
                     return "(dr[\"" + SqlType + ")" + variable + "\"])";
@@ -317,6 +281,276 @@ namespace Linnso.CRUDGen.BL.BC
 
             }
         }
+        #endregion
+
+        #region MySQL
+        public static String TypeFromMySQL(String MySqlType)
+        {
+            switch (MySqlType.ToLower())
+            {
+                case "bool":
+                case "boolean":
+                case "bit":
+                    return "bool";
+
+                case "tinyint":
+                    return "sbyte";
+
+                case "smallint":
+                case "year":
+                    return "short";
+
+                case "int": 
+                case "integer": 
+                case "mediumint":
+                    return "int";
+
+                case "bigint":
+                    return "long";
+
+                case "float":
+                    return "Single";
+
+                case "double": 
+                case "real":
+                    return "double";
+
+                case "decimal": 
+                case "numeric": 
+                case "dec": 
+                case "fixed": 
+                case "serial":
+                    return "decimal";
+
+                case "date": 
+                case "timestamp": 
+                case "datetime":
+                    return "DateTime";
+
+                case "time":
+                    return "TimeSpan";
+
+                case "char": 
+                case "varchar": 
+                case "tinytext": 
+                case "text": 
+                case "mediumtext": 
+                case "longtext": 
+                case "set":
+                case "enum": 
+                case "nchar": 
+                case "nvarchar":
+                    return "string";
+
+                case "binary": 
+                case "varbinary": 
+                case "tinyblob": 
+                case "blob": 
+                case "mediumblob": 
+                case "longblob":
+                    return "byte[]";
+
+                default:
+                    return MySqlType;
+            }
+        }
+
+        public static String KeyParametersMySQL(List<ColumnaBE> lstColumnaBE)
+        {
+            String parametros = "";
+
+            foreach (ColumnaBE c in lstColumnaBE)
+            {
+                if (c.Es_PK)
+                    parametros += TypeFromMySQL(c.Tipo_Dato) + " " + StandarizarNombreParametro(c.Nombre) + ", ";
+            }
+
+            if (!String.IsNullOrEmpty(parametros))
+                parametros = parametros.Substring(0, parametros.Length - 2);
+
+            return parametros;
+        }
+
+        public static String ConvertFromMySQLNULL(String MySqlType, String variable)
+        {
+            switch (MySqlType.ToLower())
+            {
+                case "bool":
+                case "boolean":
+                case "bit":
+                    return "dr[\"" + variable + "\"] as bool?";
+
+                case "tinyint":
+                    return "dr[\"" + variable + "\"] as sbyte?";
+
+                case "smallint":
+                case "year":
+                    return "dr[\"" + variable + "\"] as short?";
+
+                case "int":
+                case "integer":
+                case "mediumint":
+                    return "dr[\"" + variable + "\"] as int?";
+
+                case "bigint":
+                    return "dr[\"" + variable + "\"] as long?";
+
+                case "float":
+                    return "dr[\"" + variable + "\"] as float?";
+
+                case "double":
+                case "real":
+                    return "dr[\"" + variable + "\"] as double?";
+
+                case "decimal":
+                case "numeric":
+                case "dec":
+                case "fixed":
+                case "serial":
+                    return "dr[\"" + variable + "\"] as decimal?";
+
+                case "date":
+                case "timestamp":
+                case "datetime":
+                    return "dr[\"" + variable + "\"] as DateTime?";
+
+                case "time":
+                    return "dr[\"" + variable + "\"] as TimeSpan?";
+
+                case "char":
+                case "varchar":
+                case "tinytext":
+                case "text":
+                case "mediumtext":
+                case "longtext":
+                case "set":
+                case "enum":
+                case "nchar":
+                case "nvarchar":
+                    return "dr[\"" + variable + "\"] as string";
+
+                case "binary":
+                case "varbinary":
+                case "tinyblob":
+                case "blob":
+                case "mediumblob":
+                case "longblob":
+                    return "(byte[])dr[\"" + variable + "\"]";
+
+                default:
+                    return "(dr[\"" + MySqlType + ")" + variable + "\"])";
+            }
+        }
+
+        public static String ConvertFromMySQL(String MySqlType, String variable)
+        {
+            switch (MySqlType.ToLower())
+            {
+                case "bool":
+                case "boolean":
+                case "bit":
+                    return "Convert.ToBoolean(dr[\"" + variable + "\"])";
+
+                case "tinyint":
+                    return "Convert.ToSByte(dr[\"" + variable + "\"])";
+
+                case "smallint":
+                case "year":
+                    return "Convert.ToInt16(dr[\"" + variable + "\"])";
+
+                case "int":
+                case "integer":
+                case "mediumint":
+                    return "Convert.ToInt32(dr[\"" + variable + "\"])";
+
+                case "bigint":
+                    return "Convert.ToInt64(dr[\"" + variable + "\"])";
+
+                case "float":
+                    return "Convert.ToSingle(dr[\"" + variable + "\"])";
+
+                case "double":
+                case "real":
+                    return "Convert.ToDouble(dr[\"" + variable + "\"])";
+
+                case "decimal":
+                case "numeric":
+                case "dec":
+                case "fixed":
+                case "serial":
+                    return "Convert.ToDecimal(dr[\"" + variable + "\"])";
+
+                case "date":
+                case "timestamp":
+                case "datetime":
+                    return "Convert.ToDateTime(dr[\"" + variable + "\"])";
+
+                case "time":
+                    return "TimeSpan.Parse(dr[\"" + variable + "\"])";
+
+                case "char":
+                case "varchar":
+                case "tinytext":
+                case "text":
+                case "mediumtext":
+                case "longtext":
+                case "set":
+                case "enum":
+                case "nchar":
+                case "nvarchar":
+                    return "dr[\"" + variable + "\"].ToString()";
+
+                case "binary":
+                case "varbinary":
+                case "tinyblob":
+                case "blob":
+                case "mediumblob":
+                case "longblob":
+                    return "(byte[])dr[\"" + variable + "\"]";
+
+                default:
+                    return "(dr[\"" + MySqlType + ")" + variable + "\"])";
+            }
+        }
+
+        public static String MySQLParameter(ColumnaBE objColumnaBE)
+        {
+            switch (objColumnaBE.Tipo_Dato.ToLower())
+            {
+                case "char":
+                case "time":
+                case "varbinary":
+                case "varchar":
+                    return objColumnaBE.Tipo_Dato + "(" + (objColumnaBE.Tamano_Maximo == -1 ? "MAX" : objColumnaBE.Tamano_Maximo.ToString()) + ")";
+                case "decimal":
+                    return objColumnaBE.Tipo_Dato + "(" + objColumnaBE.Precision_Numerica + ", " + objColumnaBE.Precision_Numerica_Base + ")";
+                default:
+                    return objColumnaBE.Tipo_Dato;
+            }
+        }
+        #endregion
+
+        #region General
+        public static String StandarizarNombreClase(String nombre)
+        {
+            nombre = nombre.Replace(" ", "_");
+            String[] separado = nombre.Split('_');
+            String nombre_estandarizado = "";
+
+            foreach (String s in separado)
+            {
+                nombre_estandarizado += char.ToUpper(s[0]) + s.Substring(1) + "_";
+            }
+            nombre_estandarizado = nombre_estandarizado.TrimEnd('_');
+
+            return nombre_estandarizado;
+        }
+
+        public static String StandarizarNombreParametro(String nombre)
+        {
+            nombre = nombre.ToLower().Replace(" ", "_");
+            return nombre;
+        }
 
         public static Boolean ClaseNull(String clase)
         {
@@ -328,5 +562,23 @@ namespace Linnso.CRUDGen.BL.BC
 
             return acepta_null;
         }
+
+        public static String KeyVariables(List<ColumnaBE> lstColumnaBE)
+        {
+            String parametros = "";
+
+            foreach (ColumnaBE c in lstColumnaBE)
+            {
+                if (c.Es_PK)
+                    parametros += StandarizarNombreParametro(c.Nombre) + ", ";
+            }
+
+            if (!String.IsNullOrEmpty(parametros))
+                parametros = parametros.Substring(0, parametros.Length - 2);
+
+            return parametros;
+        }
+
+        #endregion
     }
 }
