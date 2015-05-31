@@ -9,11 +9,11 @@ namespace Linnso.CRUDGen.PL.Win
 {
     public class Tools
     {
-        public static void GetPostName(out string dalc, out string bc, out string be)
+        public static void GetPostName(out string dalc, out string bc, out string be, out string helper)
         {
             string path = Application.StartupPath + @"\datos\config.xml";
             var xml = XDocument.Load(path);
-            dalc = bc = be = "";
+            dalc = bc = be = helper = "";
 
             var postNames = from postName in xml.Descendants("postname") select postName;
 
@@ -24,15 +24,16 @@ namespace Linnso.CRUDGen.PL.Win
                     case "BC": bc = p.Attribute("valor").Value; break;
                     case "BE": be = p.Attribute("valor").Value; break;
                     case "DALC": dalc = p.Attribute("valor").Value; break;
+                    case "Helper": helper = p.Attribute("valor").Value; break;
                 }
             }
         }
 
-        public static void GetCamposAuditoria(out string usuarioCreacion, out string usuarioModificacion, out string fechaCreacion, out string fechaModificacion)
+        public static void GetCamposAuditoria(out string usuarioCreacion, out string usuarioModificacion, out string fechaCreacion, out string fechaModificacion, out string habilitado)
         {
             string path = Application.StartupPath + @"\datos\config.xml";
             var xml = XDocument.Load(path);
-            usuarioCreacion = usuarioModificacion = fechaCreacion = fechaModificacion = "";
+            usuarioCreacion = usuarioModificacion = fechaCreacion = fechaModificacion = habilitado = "";
 
             var auditorias = from auditoria in xml.Descendants("auditoria") select auditoria;
 
@@ -44,6 +45,7 @@ namespace Linnso.CRUDGen.PL.Win
                     case "UsuarioModificacion": usuarioModificacion = p.Attribute("valor").Value; break;
                     case "FechaCreacion": fechaCreacion = p.Attribute("valor").Value; break;
                     case "FechaModificacion": fechaModificacion = p.Attribute("valor").Value; break;
+                    case "Habilitado": habilitado = p.Attribute("valor").Value; break;
                 }
             }
         }

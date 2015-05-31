@@ -138,6 +138,7 @@ namespace Linnso.CRUDGen.PL.Win
                     String ruta = fbdFileOutpot.SelectedPath;
                     SystemBC objSystemBC = new SystemBC();
                     ConexionBE objConexionBE = ObtenerConexion();
+                    ToolGenBC objToolBC = new ToolGenBC();
 
                     //frmAccesoBD objfrmAccesoBD = frmAccesoBD.GetInstance();
 
@@ -149,17 +150,19 @@ namespace Linnso.CRUDGen.PL.Win
                     String dir_bc = dir_bd + "/BC";
                     String dir_be = dir_bd + "/BE";
                     String dir_sp = dir_bd + "/SP";
+                    String dir_helper = dir_bd + "/HELPER";
 
                     Boolean sp_header = false;
 
-                    string nsDALC, nsBC, nsBE = "";
-                    Tools.GetPostName(out nsDALC, out nsBC, out nsBE);
+                    string nsDALC, nsBC, nsBE, nsHelper = "";
+                    Tools.GetPostName(out nsDALC, out nsBC, out nsBE, out nsHelper);
                     nsDALC = txtPreNamespace.Text + "." + nsDALC;
                     nsBC = txtPreNamespace.Text + "." + nsBC;
                     nsBE = txtPreNamespace.Text + "." + nsBE;
+                    nsHelper = txtPreNamespace.Text + "." + nsHelper;
 
-                    string usuarioCreacion, usuarioModificacion, fechaCreacion, fechaModificacion;
-                    Tools.GetCamposAuditoria(out usuarioCreacion, out usuarioModificacion, out fechaCreacion, out fechaModificacion);
+                    string usuarioCreacion, usuarioModificacion, fechaCreacion, fechaModificacion, habilitado;
+                    Tools.GetCamposAuditoria(out usuarioCreacion, out usuarioModificacion, out fechaCreacion, out fechaModificacion, out habilitado);
 
                     foreach (DataGridViewRow r in dgvTablas.Rows)
                     {
@@ -293,9 +296,25 @@ namespace Linnso.CRUDGen.PL.Win
                         String archivo_tool = dir_dalc + "/Tool.cs";
                         File.Create(archivo_tool).Dispose();
 
-                        ToolGenBC objToolBC = new ToolGenBC();
                         objToolBC._Ruta = archivo_tool;
-                        objToolBC.CrearArchivo(nsDALC, txtCSTag.Text);
+                        objToolBC.CrearToolDALC(nsDALC, txtCSTag.Text);
+                    }
+
+                    CrearCarpeta(dir_helper);
+
+                    String helper_tools = dir_helper + "/HelperTools.cs";
+                    File.Create(helper_tools).Dispose();
+
+                    objToolBC._Ruta = helper_tools;
+                    objToolBC.CrearToolBC(nsHelper);
+
+                    if (chkLogErrores.Checked)
+                    {
+                        String log_file = dir_helper + "/LogFile.cs";
+                        File.Create(log_file).Dispose();
+
+                        objToolBC._Ruta = log_file;
+                        objToolBC.CrearLogBC(nsHelper);
                     }
 
                     MessageBox.Show("Los archivos se generaros satisfacotoriamente.", "Generar CRUD", MessageBoxButtons.OK, MessageBoxIcon.Information);

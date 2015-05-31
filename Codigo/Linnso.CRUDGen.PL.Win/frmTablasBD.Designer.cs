@@ -56,11 +56,14 @@
             this.btnNinguno = new System.Windows.Forms.Button();
             this.btnTodo = new System.Windows.Forms.Button();
             this.bwTablasBD = new System.ComponentModel.BackgroundWorker();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.chkLogErrores = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTablas)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // dgvTablas
@@ -158,7 +161,7 @@
             this.groupBox2.Size = new System.Drawing.Size(333, 146);
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Opciones";
+            this.groupBox2.Text = "CRUD a Generar";
             // 
             // chkDelete
             // 
@@ -279,7 +282,7 @@
             this.groupBox4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox4.Size = new System.Drawing.Size(418, 146);
+            this.groupBox4.Size = new System.Drawing.Size(418, 132);
             this.groupBox4.TabIndex = 13;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Cadena de Conexión";
@@ -289,7 +292,7 @@
             this.chkGenerarTool.AutoSize = true;
             this.chkGenerarTool.Checked = true;
             this.chkGenerarTool.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkGenerarTool.Location = new System.Drawing.Point(123, 103);
+            this.chkGenerarTool.Location = new System.Drawing.Point(123, 98);
             this.chkGenerarTool.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkGenerarTool.Name = "chkGenerarTool";
             this.chkGenerarTool.Size = new System.Drawing.Size(148, 24);
@@ -358,12 +361,35 @@
             this.btnTodo.UseVisualStyleBackColor = true;
             this.btnTodo.Click += new System.EventHandler(this.btnTodo_Click);
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.chkLogErrores);
+            this.groupBox5.Location = new System.Drawing.Point(377, 602);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(418, 82);
+            this.groupBox5.TabIndex = 16;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Otras Opciones";
+            // 
+            // chkLogErrores
+            // 
+            this.chkLogErrores.AutoSize = true;
+            this.chkLogErrores.Checked = true;
+            this.chkLogErrores.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkLogErrores.Location = new System.Drawing.Point(12, 31);
+            this.chkLogErrores.Name = "chkLogErrores";
+            this.chkLogErrores.Size = new System.Drawing.Size(140, 24);
+            this.chkLogErrores.TabIndex = 0;
+            this.chkLogErrores.Text = "Log de Errores";
+            this.chkLogErrores.UseVisualStyleBackColor = true;
+            // 
             // frmTablasBD
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(818, 765);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.btnTodo);
             this.Controls.Add(this.btnNinguno);
             this.Controls.Add(this.groupBox4);
@@ -387,6 +413,8 @@
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -420,5 +448,7 @@
         private System.Windows.Forms.Button btnNinguno;
         private System.Windows.Forms.Button btnTodo;
         private System.ComponentModel.BackgroundWorker bwTablasBD;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.CheckBox chkLogErrores;
     }
 }

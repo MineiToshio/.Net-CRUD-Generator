@@ -29,18 +29,20 @@ namespace Linnso.CRUDGen.PL.Win
 
         public void CargarDatos()
         {
-            string dalc, bc, be = "";
-            Tools.GetPostName(out dalc, out bc, out be);
+            string dalc, bc, be, helper = "";
+            Tools.GetPostName(out dalc, out bc, out be, out helper);
             txtDALC.Text = dalc; 
             txtBC.Text = bc; 
             txtBE.Text = be;
+            txtHelper.Text = helper;
 
-            string usuarioCreacion, usuarioModificacion, fechaCreacion, fechaModificacion = "";
-            Tools.GetCamposAuditoria(out usuarioCreacion, out usuarioModificacion, out fechaCreacion, out fechaModificacion);
+            string usuarioCreacion, usuarioModificacion, fechaCreacion, fechaModificacion, habilitado = "";
+            Tools.GetCamposAuditoria(out usuarioCreacion, out usuarioModificacion, out fechaCreacion, out fechaModificacion, out habilitado);
             txtUsuarioCreacion.Text = usuarioCreacion;
             txtUsuarioModificacion.Text = usuarioModificacion;
             txtFechaCreacion.Text = fechaCreacion;
             txtFechaModificacion.Text = fechaModificacion;
+            txtHabilitado.Text = habilitado;
         }
 
         protected override void OnClosing(CancelEventArgs e)

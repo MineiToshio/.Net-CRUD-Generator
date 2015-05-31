@@ -46,12 +46,18 @@
             this.label4 = new System.Windows.Forms.Label();
             this.btnCerrar = new System.Windows.Forms.Button();
             this.btnGuardar = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txtHelper = new System.Windows.Forms.TextBox();
+            this.txtHabilitado = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.txtHelper);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
@@ -60,7 +66,7 @@
             this.groupBox1.Controls.Add(this.txtBE);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(374, 130);
+            this.groupBox1.Size = new System.Drawing.Size(374, 159);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Postfijo de los Namespaces";
@@ -115,6 +121,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.txtHabilitado);
+            this.groupBox2.Controls.Add(this.label9);
             this.groupBox2.Controls.Add(this.txtFechaModificacion);
             this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.txtFechaCreacion);
@@ -123,9 +131,9 @@
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.txtUsuarioCreacion);
             this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Location = new System.Drawing.Point(12, 148);
+            this.groupBox2.Location = new System.Drawing.Point(13, 177);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(374, 166);
+            this.groupBox2.Size = new System.Drawing.Size(374, 196);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Campos de Auditoría";
@@ -196,7 +204,7 @@
             // 
             // btnCerrar
             // 
-            this.btnCerrar.Location = new System.Drawing.Point(293, 337);
+            this.btnCerrar.Location = new System.Drawing.Point(292, 379);
             this.btnCerrar.Name = "btnCerrar";
             this.btnCerrar.Size = new System.Drawing.Size(95, 40);
             this.btnCerrar.TabIndex = 5;
@@ -206,18 +214,50 @@
             // 
             // btnGuardar
             // 
-            this.btnGuardar.Location = new System.Drawing.Point(192, 337);
+            this.btnGuardar.Location = new System.Drawing.Point(191, 379);
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(95, 40);
             this.btnGuardar.TabIndex = 6;
             this.btnGuardar.Text = "Guardar";
             this.btnGuardar.UseVisualStyleBackColor = true;
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(17, 124);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(56, 20);
+            this.label8.TabIndex = 10;
+            this.label8.Text = "Helper";
+            // 
+            // txtHelper
+            // 
+            this.txtHelper.Location = new System.Drawing.Point(99, 121);
+            this.txtHelper.Name = "txtHelper";
+            this.txtHelper.Size = new System.Drawing.Size(259, 26);
+            this.txtHelper.TabIndex = 9;
+            // 
+            // txtHabilitado
+            // 
+            this.txtHabilitado.Location = new System.Drawing.Point(179, 156);
+            this.txtHabilitado.Name = "txtHabilitado";
+            this.txtHabilitado.Size = new System.Drawing.Size(178, 26);
+            this.txtHabilitado.TabIndex = 16;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(16, 159);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(80, 20);
+            this.label9.TabIndex = 17;
+            this.label9.Text = "Habilitado";
+            // 
             // frmConfiguracion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(399, 386);
+            this.ClientSize = new System.Drawing.Size(399, 427);
             this.Controls.Add(this.btnGuardar);
             this.Controls.Add(this.btnCerrar);
             this.Controls.Add(this.groupBox2);
@@ -256,5 +296,9 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtUsuarioCreacion;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox txtHelper;
+        private System.Windows.Forms.TextBox txtHabilitado;
+        private System.Windows.Forms.Label label9;
     }
 }

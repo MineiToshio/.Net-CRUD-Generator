@@ -160,8 +160,11 @@ namespace Linnso.CRUDGen.BL.BC
                     sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Update] (");
                     foreach (ColumnaBE c in _lstColumnaBE)
                     {
-                        sp.WriteLine("    @" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (c.Acepta_Nulos ? " = null" : "") + (n_iteraciones != _lstColumnaBE.Count - 1 ? "," : ""));
-                        n_iteraciones++;
+                        if (c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoUsuarioCreacion)
+                        {
+                            sp.WriteLine("    @" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (c.Acepta_Nulos ? " = null" : "") + (n_iteraciones != _lstColumnaBE.Count - 1 ? "," : ""));
+                            n_iteraciones++;
+                        }
                     }
                     sp.WriteLine(")");
                     sp.WriteLine("AS");
@@ -174,9 +177,12 @@ namespace Linnso.CRUDGen.BL.BC
                     n_iteraciones = 0;
                     foreach (ColumnaBE c in _lstColumnaBE)
                     {
-                        if (!c.Es_PK)
+                        if (!c.Es_PK && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoUsuarioCreacion)
                         {
-                            sp.WriteLine("        [" + c.Nombre + "] = @" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_no_pk - 1 ? "," : ""));
+                            if(c.Nombre == _CampoFechaModificacion)
+                                sp.WriteLine("        [" + c.Nombre + "] = GETUTCDATE()" + (n_iteraciones != n_no_pk - 1 ? "," : ""));
+                            else
+                                sp.WriteLine("        [" + c.Nombre + "] = @" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_no_pk - 1 ? "," : ""));
                             n_iteraciones++;
                         }
                     }

@@ -106,7 +106,7 @@ namespace Linnso.CRUDGen.BL.BC
 
         public void SQLGenerarUpdate()
         {
-            int n_no_pk = (from c in _lstColumnaBE where !c.Es_PK select c).Count();
+            int n_no_pk = (from c in _lstColumnaBE where !c.Es_PK && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoUsuarioCreacion select c).Count();
             int n_pk = (from c in _lstColumnaBE where c.Es_PK select c).Count();
 
             if (n_no_pk != 0 && n_pk != 0)
@@ -117,7 +117,7 @@ namespace Linnso.CRUDGen.BL.BC
                 dalc.WriteLine("        {");
                 dalc.WriteLine("            String cadena;");
                 dalc.WriteLine("            String sql = \"" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Update\";");
-                dalc.WriteLine("            SqlParameter[] arrParameters = new SqlParameter[" + _lstColumnaBE.Count + "];");
+                dalc.WriteLine("            SqlParameter[] arrParameters = new SqlParameter[" + (n_no_pk + n_pk) + "];");
                 dalc.WriteLine("");
                 dalc.WriteLine("            try");
                 dalc.WriteLine("            {");
@@ -134,8 +134,11 @@ namespace Linnso.CRUDGen.BL.BC
                 int index = 0;
                 foreach (ColumnaBE c in _lstColumnaBE)
                 {
-                    dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new SqlParameter(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
-                    index++;
+                    if (c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion)
+                    {
+                        dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new SqlParameter(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
+                        index++;
+                    }
                 }
 
                 dalc.WriteLine("");

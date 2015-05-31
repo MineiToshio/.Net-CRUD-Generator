@@ -4,8 +4,10 @@
   <postname nombre="BC" valor="BL.BC"></postname>
   <postname nombre="BE" valor="BL.BE"></postname>
   <postname nombre="DALC" valor="DL.DALC"></postname>
+  <postname nombre="Helper" valor="BL.Helper"></postname>
   <auditoria nombre="UsuarioCreacion" valor="id_usuario_creacion"></auditoria>
   <auditoria nombre="UsuarioModificacion" valor="id_usuario_modificacion"></auditoria>
   <auditoria nombre="FechaCreacion" valor="fecha_creacion"></auditoria>
   <auditoria nombre="FechaModificacion" valor="fecha_modificacion"></auditoria>
+  <auditoria nombre="Habilitado" valor="habilitado"></auditoria>
 </configuracion>
