@@ -18,6 +18,7 @@ namespace Linnso.CRUDGen.BL.BC
         public string _CampoUsuarioModificacion { get; set; }
         public string _CampoFechaCreacion { get; set; }
         public string _CampoFechaModificacion { get; set; }
+        public string _CampoHabilitado { get; set; }
 
         public void GenerarHeader()
         {
@@ -81,7 +82,7 @@ namespace Linnso.CRUDGen.BL.BC
 
                 foreach(ColumnaBE c in _lstColumnaBE)
                 {
-                    if (!c.Es_Identity && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion)
+                    if (!c.Es_Identity && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoHabilitado)
                     {
                         if (c.Nombre != _CampoUsuarioModificacion)
                             sp.WriteLine("    @" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (c.Acepta_Nulos ? " = null" : "") + (n_iteraciones != n_no_identity - 1 ? "," : ""));
@@ -121,6 +122,8 @@ namespace Linnso.CRUDGen.BL.BC
                     {
                         if (c.Nombre == _CampoFechaCreacion || c.Nombre == _CampoFechaModificacion)
                             sp.WriteLine("        GETUTCDATE()" + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        else if (c.Nombre == _CampoHabilitado)
+                            sp.WriteLine("        1" + (n_iteraciones != n_no_identity - 1 ? "," : ""));
                         else if (c.Nombre == _CampoUsuarioModificacion)
                         {
                             if(creador.Count() > 0) //Existe usuario creación
@@ -160,7 +163,7 @@ namespace Linnso.CRUDGen.BL.BC
                     sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Update] (");
                     foreach (ColumnaBE c in _lstColumnaBE)
                     {
-                        if (c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoUsuarioCreacion)
+                        if (c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoHabilitado)
                         {
                             sp.WriteLine("    @" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (c.Acepta_Nulos ? " = null" : "") + (n_iteraciones != _lstColumnaBE.Count - 1 ? "," : ""));
                             n_iteraciones++;
@@ -177,7 +180,7 @@ namespace Linnso.CRUDGen.BL.BC
                     n_iteraciones = 0;
                     foreach (ColumnaBE c in _lstColumnaBE)
                     {
-                        if (!c.Es_PK && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoUsuarioCreacion)
+                        if (!c.Es_PK && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoHabilitado)
                         {
                             if(c.Nombre == _CampoFechaModificacion)
                                 sp.WriteLine("        [" + c.Nombre + "] = GETUTCDATE()" + (n_iteraciones != n_no_pk - 1 ? "," : ""));

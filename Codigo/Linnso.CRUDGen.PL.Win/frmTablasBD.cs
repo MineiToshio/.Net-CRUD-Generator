@@ -204,8 +204,9 @@ namespace Linnso.CRUDGen.PL.Win
                                 objDALCGen._CampoUsuarioModificacion = usuarioModificacion;
                                 objDALCGen._CampoFechaCreacion = fechaCreacion;
                                 objDALCGen._CampoFechaModificacion = fechaModificacion;
+                                objDALCGen._CampoHabilitado = habilitado;
 
-                                objDALCGen.GenerarHeader(nsDALC, nsBE);
+                                objDALCGen.GenerarHeader(nsDALC, nsBE, nsHelper);
 
                                 if (chkInsert.Checked) objDALCGen.SQLGenerarInsert();
                                 if (chkUpdate.Checked) objDALCGen.SQLGenerarUpdate();
@@ -273,6 +274,7 @@ namespace Linnso.CRUDGen.PL.Win
                                 objSPGenBC._CampoUsuarioModificacion = usuarioModificacion;
                                 objSPGenBC._CampoFechaCreacion = fechaCreacion;
                                 objSPGenBC._CampoFechaModificacion = fechaModificacion;
+                                objSPGenBC._CampoHabilitado = habilitado;
 
                                 if (!sp_header)
                                 {
@@ -317,7 +319,7 @@ namespace Linnso.CRUDGen.PL.Win
                         objToolBC.CrearLogBC(nsHelper);
                     }
 
-                    MessageBox.Show("Los archivos se generaros satisfacotoriamente.", "Generar CRUD", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Los archivos se generaron satisfactoriamente.", "Generar CRUD", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             else

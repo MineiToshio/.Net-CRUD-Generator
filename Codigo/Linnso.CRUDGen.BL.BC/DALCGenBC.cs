@@ -19,6 +19,7 @@ namespace Linnso.CRUDGen.BL.BC
         public string _CampoUsuarioModificacion { get; set; }
         public string _CampoFechaCreacion { get; set; }
         public string _CampoFechaModificacion { get; set; }
+        public string _CampoHabilitado { get; set; }
 
         #region SQL Server
         public void SQLGenerarInsert()
@@ -27,7 +28,7 @@ namespace Linnso.CRUDGen.BL.BC
 
             int n_creador = (from c in _lstColumnaBE where c.Nombre == _CampoUsuarioCreacion select c).Count();
             int n_modificador = (from c in _lstColumnaBE where c.Nombre == _CampoUsuarioModificacion select c).Count();
-            int n_parametros = (from c in _lstColumnaBE where !c.Es_Identity && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion select c).Count();
+            int n_parametros = (from c in _lstColumnaBE where !c.Es_Identity && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoHabilitado select c).Count();
             int n_identity = (from c in _lstColumnaBE where c.Es_Identity select c).Count();
 
             if (n_creador == 1 && n_modificador == 1)
@@ -57,7 +58,7 @@ namespace Linnso.CRUDGen.BL.BC
 
             foreach (ColumnaBE c in _lstColumnaBE)
             {
-                if (!c.Es_Identity && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion)
+                if (!c.Es_Identity && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoHabilitado)
                 {
                     if (c.Nombre == _CampoUsuarioModificacion)
                     {
@@ -106,10 +107,11 @@ namespace Linnso.CRUDGen.BL.BC
 
         public void SQLGenerarUpdate()
         {
-            int n_no_pk = (from c in _lstColumnaBE where !c.Es_PK && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoUsuarioCreacion select c).Count();
+            int n_parametros = (from c in _lstColumnaBE 
+                                where !c.Es_PK && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoHabilitado select c).Count();
             int n_pk = (from c in _lstColumnaBE where c.Es_PK select c).Count();
 
-            if (n_no_pk != 0 && n_pk != 0)
+            if (n_parametros != 0 && n_pk != 0)
             {
                 StreamWriter dalc = File.AppendText(_Ruta);
 
@@ -117,7 +119,7 @@ namespace Linnso.CRUDGen.BL.BC
                 dalc.WriteLine("        {");
                 dalc.WriteLine("            String cadena;");
                 dalc.WriteLine("            String sql = \"" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Update\";");
-                dalc.WriteLine("            SqlParameter[] arrParameters = new SqlParameter[" + (n_no_pk + n_pk) + "];");
+                dalc.WriteLine("            SqlParameter[] arrParameters = new SqlParameter[" + (n_parametros + n_pk) + "];");
                 dalc.WriteLine("");
                 dalc.WriteLine("            try");
                 dalc.WriteLine("            {");
@@ -134,7 +136,7 @@ namespace Linnso.CRUDGen.BL.BC
                 int index = 0;
                 foreach (ColumnaBE c in _lstColumnaBE)
                 {
-                    if (c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion)
+                    if (c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoHabilitado)
                     {
                         dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new SqlParameter(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
                         index++;
@@ -383,7 +385,10 @@ namespace Linnso.CRUDGen.BL.BC
             foreach (ColumnaBE c in _lstColumnaBE)
             {
                 if (!c.Acepta_Nulos)
-                    dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = " + ToolBC.ConvertFromSQL(c.Tipo_Dato, c.Nombre) + ";");
+                    if (c.Nombre == _CampoFechaCreacion || c.Nombre == _CampoFechaModificacion)
+                        dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = HelperTools.UtcToLocal(" + ToolBC.ConvertFromSQL(c.Tipo_Dato, c.Nombre) + ");");
+                    else
+                        dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = " + ToolBC.ConvertFromSQL(c.Tipo_Dato, c.Nombre) + ";");
                 else
                 {
                     switch (ToolBC.TypeFromSQL(c.Tipo_Dato))
@@ -392,7 +397,10 @@ namespace Linnso.CRUDGen.BL.BC
                             dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = dr[\"" + c.Nombre + "\"] != DBNull.Value ? (" + ToolBC.TypeFromSQL(c.Tipo_Dato) + "?)dr[\"" + c.Nombre + "\"]" + " : null;");
                             break;
                         default:
-                            dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = " + ToolBC.ConvertFromSQLNULL(c.Tipo_Dato, c.Nombre) + ";");
+                            if(c.Nombre == _CampoFechaCreacion || c.Nombre == _CampoFechaModificacion)
+                                dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = HelperTools.UtcToLocal(" + ToolBC.ConvertFromSQLNULL(c.Tipo_Dato, c.Nombre) + ");");
+                            else
+                                dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = " + ToolBC.ConvertFromSQLNULL(c.Tipo_Dato, c.Nombre) + ";");
                             break;
                     }
                 }
@@ -405,7 +413,7 @@ namespace Linnso.CRUDGen.BL.BC
         #endregion
 
         #region General
-        public void GenerarHeader(String nsDALC, String nsBE)
+        public void GenerarHeader(String nsDALC, String nsBE, String nsHelper)
         {
             StreamWriter dalc = File.AppendText(_Ruta);
 
@@ -425,6 +433,7 @@ namespace Linnso.CRUDGen.BL.BC
                     break;
             }
             dalc.WriteLine("using " + nsBE + ";");
+            dalc.WriteLine("using " + nsHelper + ";");
 
             dalc.WriteLine("");
             dalc.WriteLine("namespace " + nsDALC);

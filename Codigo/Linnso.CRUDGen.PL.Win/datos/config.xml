@@ -9,5 +9,5 @@
   <auditoria nombre="UsuarioModificacion" valor="id_usuario_modificacion"></auditoria>
   <auditoria nombre="FechaCreacion" valor="fecha_creacion"></auditoria>
   <auditoria nombre="FechaModificacion" valor="fecha_modificacion"></auditoria>
-  <auditoria nombre="Habilitado" valor="habilitado"></auditoria>
+  <auditoria nombre="Habilitado" valor="activo"></auditoria>
 </configuracion>
