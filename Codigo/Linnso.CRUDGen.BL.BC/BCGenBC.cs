@@ -12,6 +12,8 @@ namespace Linnso.CRUDGen.BL.BC
         public String _Ruta { get; set; }
         public TablaBE _objTablaBE { get; set; }
         public List<ColumnaBE> _lstColumnaBE { get; set; }
+        public int _DataSource { get; set; }
+        public string _CampoHabilitado { get; set; }
 
         public void GenerarHeader(String nsBC, String nsDALC, String nsBE)
         {
@@ -148,7 +150,7 @@ namespace Linnso.CRUDGen.BL.BC
 
             try
             {
-                bc.WriteLine("        public void Delete_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParametersSQL(_lstColumnaBE) + ")");
+                bc.WriteLine("        public void Delete_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParameters(_lstColumnaBE, _DataSource) + ")");
                 bc.WriteLine("        {");
                 bc.WriteLine("            try");
                 bc.WriteLine("            {");
@@ -202,11 +204,40 @@ namespace Linnso.CRUDGen.BL.BC
 
             try
             {
-                bc.WriteLine("        public " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE Get_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParametersSQL(_lstColumnaBE) + ")");
+                bc.WriteLine("        public " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE Get_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParameters(_lstColumnaBE, _DataSource) + ")");
                 bc.WriteLine("        {");
                 bc.WriteLine("            try");
                 bc.WriteLine("            {");
                 bc.WriteLine("                return obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "DALC.Get_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyVariables(_lstColumnaBE) + ");");
+                bc.WriteLine("            }");
+                bc.WriteLine("            catch(Exception)");
+                bc.WriteLine("            {");
+                bc.WriteLine("                throw;");
+                bc.WriteLine("            }");
+                bc.WriteLine("        }");
+                bc.WriteLine("");
+
+                bc.Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public void GenerarChangeState()
+        {
+            int n_habilitado = (from c in _lstColumnaBE where c.Nombre == _CampoHabilitado select c).Count();
+
+            StreamWriter bc = File.AppendText(_Ruta);
+
+            try
+            {
+                bc.WriteLine("        public void Change_State_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParameters(_lstColumnaBE, _DataSource) + ")");
+                bc.WriteLine("        {");
+                bc.WriteLine("            try");
+                bc.WriteLine("            {");
+                bc.WriteLine("                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "DALC.Change_State_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyVariables(_lstColumnaBE) + ");");
                 bc.WriteLine("            }");
                 bc.WriteLine("            catch(Exception)");
                 bc.WriteLine("            {");

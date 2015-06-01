@@ -580,5 +580,26 @@ namespace Linnso.CRUDGen.BL.BC
         }
 
         #endregion
+
+        #region General
+
+        public static String KeyParameters(List<ColumnaBE> lstColumnaBE, int datasource)
+        {
+            String parametros = "";
+
+            switch (datasource)
+            { 
+                case (int)DataSource.SQLServer:
+                    parametros = KeyParametersSQL(lstColumnaBE);
+                    break;
+                case (int)DataSource.MySQL:
+                    parametros = KeyParametersMySQL(lstColumnaBE);
+                    break;
+            }
+
+            return parametros;
+        }
+
+        #endregion
     }
 }

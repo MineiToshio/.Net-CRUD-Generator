@@ -38,10 +38,10 @@
             this.btnGenerar = new System.Windows.Forms.Button();
             this.fbdFileOutpot = new System.Windows.Forms.FolderBrowserDialog();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chkChangeState = new System.Windows.Forms.CheckBox();
             this.chkDelete = new System.Windows.Forms.CheckBox();
             this.chkGet = new System.Windows.Forms.CheckBox();
             this.chkSelect = new System.Windows.Forms.CheckBox();
-            this.chkInsertUpdate = new System.Windows.Forms.CheckBox();
             this.chkUpdate = new System.Windows.Forms.CheckBox();
             this.chkInsert = new System.Windows.Forms.CheckBox();
             this.txtPreNamespace = new System.Windows.Forms.TextBox();
@@ -148,10 +148,10 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.chkChangeState);
             this.groupBox2.Controls.Add(this.chkDelete);
             this.groupBox2.Controls.Add(this.chkGet);
             this.groupBox2.Controls.Add(this.chkSelect);
-            this.groupBox2.Controls.Add(this.chkInsertUpdate);
             this.groupBox2.Controls.Add(this.chkUpdate);
             this.groupBox2.Controls.Add(this.chkInsert);
             this.groupBox2.Location = new System.Drawing.Point(18, 602);
@@ -162,6 +162,19 @@
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "CRUD a Generar";
+            // 
+            // chkChangeState
+            // 
+            this.chkChangeState.AutoSize = true;
+            this.chkChangeState.Checked = true;
+            this.chkChangeState.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkChangeState.Location = new System.Drawing.Point(10, 102);
+            this.chkChangeState.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkChangeState.Name = "chkChangeState";
+            this.chkChangeState.Size = new System.Drawing.Size(134, 24);
+            this.chkChangeState.TabIndex = 6;
+            this.chkChangeState.Text = "Change State";
+            this.chkChangeState.UseVisualStyleBackColor = true;
             // 
             // chkDelete
             // 
@@ -201,19 +214,6 @@
             this.chkSelect.TabIndex = 3;
             this.chkSelect.Text = "Select All";
             this.chkSelect.UseVisualStyleBackColor = true;
-            // 
-            // chkInsertUpdate
-            // 
-            this.chkInsertUpdate.AutoSize = true;
-            this.chkInsertUpdate.Checked = true;
-            this.chkInsertUpdate.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkInsertUpdate.Location = new System.Drawing.Point(10, 102);
-            this.chkInsertUpdate.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.chkInsertUpdate.Name = "chkInsertUpdate";
-            this.chkInsertUpdate.Size = new System.Drawing.Size(133, 24);
-            this.chkInsertUpdate.TabIndex = 2;
-            this.chkInsertUpdate.Text = "Insert/Update";
-            this.chkInsertUpdate.UseVisualStyleBackColor = true;
             // 
             // chkUpdate
             // 
@@ -433,7 +433,6 @@
         private System.Windows.Forms.CheckBox chkDelete;
         private System.Windows.Forms.CheckBox chkGet;
         private System.Windows.Forms.CheckBox chkSelect;
-        private System.Windows.Forms.CheckBox chkInsertUpdate;
         private System.Windows.Forms.CheckBox chkUpdate;
         private System.Windows.Forms.CheckBox chkInsert;
         private System.Windows.Forms.TextBox txtPreNamespace;
@@ -450,5 +449,6 @@
         private System.ComponentModel.BackgroundWorker bwTablasBD;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.CheckBox chkLogErrores;
+        private System.Windows.Forms.CheckBox chkChangeState;
     }
 }

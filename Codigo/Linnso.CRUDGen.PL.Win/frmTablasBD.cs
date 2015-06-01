@@ -210,7 +210,7 @@ namespace Linnso.CRUDGen.PL.Win
 
                                 if (chkInsert.Checked) objDALCGen.GenerarInsert();
                                 if (chkUpdate.Checked) objDALCGen.GenerarUpdate();
-                                if (chkInsertUpdate.Checked) objDALCGen.SQLGenerarInsertUpdate();
+                                if (chkChangeState.Checked) objDALCGen.GenerarChangeState();
                                 if (chkSelect.Checked) objDALCGen.GenerarSelect();
                                 if (chkGet.Checked) objDALCGen.GenerarGet();
                                 if (chkDelete.Checked) objDALCGen.GenerarDelete();
@@ -228,12 +228,13 @@ namespace Linnso.CRUDGen.PL.Win
                                 objBCGenBC._Ruta = archivo_bc;
                                 objBCGenBC._lstColumnaBE = lstColumnaBE;
                                 objBCGenBC._objTablaBE = objTablaBE;
+                                objBCGenBC._DataSource = objConexionBE.DataSource;
 
                                 objBCGenBC.GenerarHeader(nsBC, nsDALC, nsBE);
 
                                 if (chkInsert.Checked) objBCGenBC.GenerarInsert();
                                 if (chkUpdate.Checked) objBCGenBC.GenerarUpdate();
-                                if (chkInsertUpdate.Checked) objBCGenBC.GenerarInsertUpdate();
+                                if (chkChangeState.Checked) objBCGenBC.GenerarChangeState();
                                 if (chkSelect.Checked) objBCGenBC.GenerarSelect();
                                 if (chkGet.Checked) objBCGenBC.GenerarGet();
                                 if (chkDelete.Checked) objBCGenBC.GenerarDelete();
@@ -287,7 +288,7 @@ namespace Linnso.CRUDGen.PL.Win
 
                                         if (chkInsert.Checked) objSPGenBC.SQLGenerarInsert();
                                         if (chkUpdate.Checked) objSPGenBC.SQLGenerarUpdate();
-                                        if (chkInsertUpdate.Checked) objSPGenBC.SQLGenerarInsertUpdate();
+                                        if (chkChangeState.Checked) objSPGenBC.SQLGenerarChangeState();
                                         if (chkSelect.Checked) objSPGenBC.SQLGenerarSelect();
                                         if (chkGet.Checked) objSPGenBC.SQLGenerarGet();
                                         if (chkDelete.Checked) objSPGenBC.SQLGenerarDelete();
@@ -301,7 +302,7 @@ namespace Linnso.CRUDGen.PL.Win
 
                                         if (chkInsert.Checked) objSPGenBC.MySQLGenerarInsert();
                                         if (chkUpdate.Checked) objSPGenBC.MySQLGenerarUpdate();
-                                        if (chkInsertUpdate.Checked) objSPGenBC.SQLGenerarInsertUpdate();
+                                        if (chkChangeState.Checked) objSPGenBC.MySQLGenerarChangeState();
                                         if (chkSelect.Checked) objSPGenBC.MySQLGenerarSelect();
                                         if (chkGet.Checked) objSPGenBC.MySQLGenerarGet();
                                         if (chkDelete.Checked) objSPGenBC.MySQLGenerarDelete();

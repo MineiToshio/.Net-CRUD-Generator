@@ -316,7 +316,7 @@ namespace Linnso.CRUDGen.BL.BC
 
             int n_key = (from c in _lstColumnaBE where c.Es_PK select c).Count();
 
-            dalc.WriteLine("        public void Delete_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParametersSQL(_lstColumnaBE) + ")");
+            dalc.WriteLine("        public void Delete_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParameters(_lstColumnaBE, _DataSource) + ")");
             dalc.WriteLine("        {");
             dalc.WriteLine("            String cadena;");
             dalc.WriteLine("            String sql = \"" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Delete\";");
@@ -419,7 +419,7 @@ namespace Linnso.CRUDGen.BL.BC
 
             int n_key = (from c in _lstColumnaBE where c.Es_PK select c).Count();
 
-            dalc.WriteLine("        public " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE Get_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParametersSQL(_lstColumnaBE) + ")");
+            dalc.WriteLine("        public " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE Get_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParameters(_lstColumnaBE, _DataSource) + ")");
             dalc.WriteLine("        {");
             dalc.WriteLine("            String cadena;");
             dalc.WriteLine("            String sql = \"" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Get\";");
@@ -463,6 +463,52 @@ namespace Linnso.CRUDGen.BL.BC
             dalc.WriteLine("        }");
             dalc.WriteLine("");
 
+            dalc.Close();
+        }
+
+        public void GenerarChangeState()
+        {
+            string connection = GetTipoConnection();
+            string parameter = GetTipoParamenter();
+            string command = GetTipoCommand();
+
+            StreamWriter dalc = File.AppendText(_Ruta);
+
+            int n_key = (from c in _lstColumnaBE where c.Es_PK select c).Count();
+
+            dalc.WriteLine("        public void Change_State_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParameters(_lstColumnaBE, _DataSource) + ")");
+            dalc.WriteLine("        {");
+            dalc.WriteLine("            String cadena;");
+            dalc.WriteLine("            String sql = \"" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Change_State\";");
+            dalc.WriteLine("            " + parameter + "[] arrParameters = new " + parameter + "[" + n_key + "];");
+            dalc.WriteLine("");
+            dalc.WriteLine("            try");
+            dalc.WriteLine("            {");
+            dalc.WriteLine("                cadena = " + (_Tool ? ToolGenBC.GetNombreFuncion() : ToolGenBC.GetCadenaConexion(_Tag)));
+            dalc.WriteLine("");
+            dalc.WriteLine("                using(" + connection + " conn = new " + connection + "(cadena))");
+            dalc.WriteLine("                {");
+            dalc.WriteLine("                    using(" + command + " cmd = conn.CreateCommand())");
+            dalc.WriteLine("                    {");
+            dalc.WriteLine("                        cmd.CommandText = sql;");
+            dalc.WriteLine("                        cmd.CommandType = CommandType.StoredProcedure;");
+            dalc.WriteLine("");
+            KeyParameters(dalc);
+            dalc.WriteLine("");
+            dalc.WriteLine("                        for (int i = 0; i < arrParameters.Length; i++)");
+            dalc.WriteLine("                            cmd.Parameters.Add(arrParameters[i]);");
+            dalc.WriteLine("");
+            dalc.WriteLine("                        cmd.Connection.Open();");
+            dalc.WriteLine("                        cmd.ExecuteNonQuery();");
+            dalc.WriteLine("                    }");
+            dalc.WriteLine("                }");
+            dalc.WriteLine("            }");
+            dalc.WriteLine("            catch(Exception)");
+            dalc.WriteLine("            {");
+            dalc.WriteLine("                throw;");
+            dalc.WriteLine("            }");
+            dalc.WriteLine("        }");
+            dalc.WriteLine("");
             dalc.Close();
         }
 

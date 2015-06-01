@@ -18,6 +18,7 @@ namespace Linnso.CRUDGen.BL.BE
         Insertar_Actualizar = 3,
         Seleccionar = 4,
         Seleccioar_X_ID = 5,
-        Eliminar = 6
+        Eliminar = 6,
+        Change_Estate = 7
     }
 }
