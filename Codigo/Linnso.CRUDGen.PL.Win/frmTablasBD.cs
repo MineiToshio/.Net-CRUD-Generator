@@ -208,12 +208,12 @@ namespace Linnso.CRUDGen.PL.Win
 
                                 objDALCGen.GenerarHeader(nsDALC, nsBE, nsHelper);
 
-                                if (chkInsert.Checked) objDALCGen.SQLGenerarInsert();
-                                if (chkUpdate.Checked) objDALCGen.SQLGenerarUpdate();
+                                if (chkInsert.Checked) objDALCGen.GenerarInsert();
+                                if (chkUpdate.Checked) objDALCGen.GenerarUpdate();
                                 if (chkInsertUpdate.Checked) objDALCGen.SQLGenerarInsertUpdate();
-                                if (chkSelect.Checked) objDALCGen.SQLGenerarSelect();
-                                if (chkGet.Checked) objDALCGen.SQLGenerarGet();
-                                if (chkDelete.Checked) objDALCGen.SQLGenerarDelete();
+                                if (chkSelect.Checked) objDALCGen.GenerarSelect();
+                                if (chkGet.Checked) objDALCGen.GenerarGet();
+                                if (chkDelete.Checked) objDALCGen.GenerarDelete();
 
                                 objDALCGen.GenerarFooter();
                             }
@@ -276,18 +276,39 @@ namespace Linnso.CRUDGen.PL.Win
                                 objSPGenBC._CampoFechaModificacion = fechaModificacion;
                                 objSPGenBC._CampoHabilitado = habilitado;
 
-                                if (!sp_header)
+                                switch (Convert.ToInt32(objConexionBE.DataSource))
                                 {
-                                    objSPGenBC.GenerarHeader();
-                                    sp_header = true;
+                                    case (int)DataSource.SQLServer:
+                                        if (!sp_header)
+                                        {
+                                            objSPGenBC.SQLGenerarHeader();
+                                            sp_header = true;
+                                        }
+
+                                        if (chkInsert.Checked) objSPGenBC.SQLGenerarInsert();
+                                        if (chkUpdate.Checked) objSPGenBC.SQLGenerarUpdate();
+                                        if (chkInsertUpdate.Checked) objSPGenBC.SQLGenerarInsertUpdate();
+                                        if (chkSelect.Checked) objSPGenBC.SQLGenerarSelect();
+                                        if (chkGet.Checked) objSPGenBC.SQLGenerarGet();
+                                        if (chkDelete.Checked) objSPGenBC.SQLGenerarDelete();
+                                        break;
+                                    case (int)DataSource.MySQL:
+                                        if (!sp_header)
+                                        {
+                                            objSPGenBC.MySQLGenerarHeader();
+                                            sp_header = true;
+                                        }
+
+                                        if (chkInsert.Checked) objSPGenBC.MySQLGenerarInsert();
+                                        if (chkUpdate.Checked) objSPGenBC.MySQLGenerarUpdate();
+                                        if (chkInsertUpdate.Checked) objSPGenBC.SQLGenerarInsertUpdate();
+                                        if (chkSelect.Checked) objSPGenBC.MySQLGenerarSelect();
+                                        if (chkGet.Checked) objSPGenBC.MySQLGenerarGet();
+                                        if (chkDelete.Checked) objSPGenBC.MySQLGenerarDelete();
+                                        break;
                                 }
 
-                                if (chkInsert.Checked) objSPGenBC.SQLGenerarInsert();
-                                if (chkUpdate.Checked) objSPGenBC.SQLGenerarUpdate();
-                                if (chkInsertUpdate.Checked) objSPGenBC.SQLGenerarInsertUpdate();
-                                if (chkSelect.Checked) objSPGenBC.SQLGenerarSelect();
-                                if (chkGet.Checked) objSPGenBC.SQLGenerarGet();
-                                if (chkDelete.Checked) objSPGenBC.SQLGenerarDelete();
+                                
                             }
                         }
                     }

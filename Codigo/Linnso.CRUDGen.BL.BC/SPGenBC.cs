@@ -20,7 +20,8 @@ namespace Linnso.CRUDGen.BL.BC
         public string _CampoFechaModificacion { get; set; }
         public string _CampoHabilitado { get; set; }
 
-        public void GenerarHeader()
+        #region SQL Server
+        public void SQLGenerarHeader()
         {
             using (StreamWriter sp = File.AppendText(_Ruta))
             {
@@ -76,7 +77,7 @@ namespace Linnso.CRUDGen.BL.BC
             {
                 SQLGenerarHeaderSP(sp, Modo.Insertar);
                 
-                sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Insert] (");
+                sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Insert] (");
 
                 var creador = from c in _lstColumnaBE where c.Nombre == _CampoUsuarioCreacion select c;
 
@@ -160,7 +161,7 @@ namespace Linnso.CRUDGen.BL.BC
                 using (StreamWriter sp = File.AppendText(_Ruta))
                 {
                     SQLGenerarHeaderSP(sp, Modo.Actualizar);
-                    sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Update] (");
+                    sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Update] (");
                     foreach (ColumnaBE c in _lstColumnaBE)
                     {
                         if (c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoHabilitado)
@@ -335,7 +336,7 @@ namespace Linnso.CRUDGen.BL.BC
             using (StreamWriter sp = File.AppendText(_Ruta))
             {
                 SQLGenerarHeaderSP(sp, Modo.Eliminar);
-                sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Delete] (");
+                sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Delete] (");
                 foreach (ColumnaBE c in _lstColumnaBE)
                 {
                     if (c.Es_PK)
@@ -375,7 +376,7 @@ namespace Linnso.CRUDGen.BL.BC
             using (StreamWriter sp = File.AppendText(_Ruta))
             {
                 SQLGenerarHeaderSP(sp, Modo.Seleccionar);
-                sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Select]");
+                sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Select]");
                 sp.WriteLine("AS");
                 sp.WriteLine("BEGIN");
                 sp.WriteLine("");
@@ -405,7 +406,7 @@ namespace Linnso.CRUDGen.BL.BC
             using (StreamWriter sp = File.AppendText(_Ruta))
             {
                 SQLGenerarHeaderSP(sp, Modo.Seleccioar_X_ID);
-                sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + _objTablaBE.Nombre_Sin_Espacios + "_Get](");
+                sp.WriteLine("CREATE PROCEDURE [" + _objTablaBE.Esquema + "].[" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Get](");
                 foreach (ColumnaBE c in _lstColumnaBE)
                 {
                     if (c.Es_PK)
@@ -433,7 +434,7 @@ namespace Linnso.CRUDGen.BL.BC
                 {
                     if (c.Es_PK)
                     {
-                        sp.WriteLine("        " + inicial_tabla + ".[" + c.Nombre + "] = @" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_pk - 1 ? " or " : ""));
+                        sp.WriteLine("        " + inicial_tabla + ".[" + c.Nombre + "] = @" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_pk - 1 ? " and " : ""));
                         n_iteraciones++;
                     }
                 }
@@ -442,5 +443,254 @@ namespace Linnso.CRUDGen.BL.BC
                 sp.WriteLine("");
             }
         }
+        #endregion
+
+        #region
+        public void MySQLGenerarHeader()
+        {
+            using (StreamWriter sp = File.AppendText(_Ruta))
+            {
+                sp.WriteLine("USE `" + _DataBase + "`;");
+                sp.WriteLine("");
+            }
+        }
+
+        public void MySQLGenerarHeaderSP(StreamWriter sp)
+        {
+            sp.WriteLine("DELIMITER $$");
+        }
+
+        public void MySQLGenerarInsert()
+        {
+            int n_identity = (from c in _lstColumnaBE where c.Es_Identity select c).Count();
+            int n_no_identity = (from c in _lstColumnaBE where !c.Es_Identity select c).Count();
+            int n_iteraciones = 0;
+
+            using (StreamWriter sp = File.AppendText(_Ruta))
+            {
+                MySQLGenerarHeaderSP(sp);
+
+                sp.WriteLine("CREATE PROCEDURE `" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Insert` (");
+
+                var creador = from c in _lstColumnaBE where c.Nombre == _CampoUsuarioCreacion select c;
+
+                foreach (ColumnaBE c in _lstColumnaBE)
+                {
+                    if (!c.Es_Identity && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoHabilitado)
+                    {
+                        if (c.Nombre != _CampoUsuarioModificacion)
+                            sp.WriteLine("    in v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        else
+                        {
+                            if (creador.Count() == 0) //existe campo creador
+                                sp.WriteLine("    in v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        }
+                        n_iteraciones++;
+                    }
+                }
+                sp.WriteLine(")");
+                sp.WriteLine("BEGIN");
+                sp.WriteLine("    insert `" + _objTablaBE.Nombre + "`");
+                sp.WriteLine("    (");
+                n_iteraciones = 0;
+
+                foreach (ColumnaBE c in _lstColumnaBE)
+                {
+                    if (!c.Es_Identity)
+                    {
+                        sp.WriteLine("        `" + c.Nombre + "`" + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        n_iteraciones++;
+                    }
+                }
+                sp.WriteLine("    )");
+                sp.WriteLine("    values");
+                sp.WriteLine("    (");
+                n_iteraciones = 0;
+                foreach (ColumnaBE c in _lstColumnaBE)
+                {
+                    if (!c.Es_Identity)
+                    {
+                        if (c.Nombre == _CampoFechaCreacion || c.Nombre == _CampoFechaModificacion)
+                            sp.WriteLine("        UTC_TIMESTAMP()" + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        else if (c.Nombre == _CampoHabilitado)
+                            sp.WriteLine("        1" + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        else if (c.Nombre == _CampoUsuarioModificacion)
+                        {
+                            if (creador.Count() > 0) //Existe usuario creación
+                                sp.WriteLine("        v_" + ToolBC.StandarizarNombreParametro(_CampoUsuarioCreacion) + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                            else
+                                sp.WriteLine("        v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        }
+                        else
+                            sp.WriteLine("        v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+                        n_iteraciones++;
+                    }
+                }
+                sp.WriteLine("    );");
+                if (n_identity == 1)
+                {
+                    sp.WriteLine("");
+                    sp.WriteLine("    select @@IDENTITY as '" + ToolBC.StandarizarNombreParametro((from c in _lstColumnaBE where c.Es_Identity select c.Nombre).ToList()[0]) + "';");
+                }
+                sp.WriteLine("END $$");
+                sp.WriteLine("");
+            }
+        }
+
+        public void MySQLGenerarUpdate()
+        {
+            int n_no_pk = (from c in _lstColumnaBE where !c.Es_PK select c).Count();
+            int n_pk = (from c in _lstColumnaBE where c.Es_PK select c).Count();
+
+            if (n_no_pk != 0 && n_pk != 0)
+            {
+                int n_iteraciones = 0;
+
+                using (StreamWriter sp = File.AppendText(_Ruta))
+                {
+                    MySQLGenerarHeaderSP(sp);
+                    sp.WriteLine("CREATE PROCEDURE `" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Update` (");
+                    foreach (ColumnaBE c in _lstColumnaBE)
+                    {
+                        if (c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoHabilitado)
+                        {
+                            sp.WriteLine("    v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.MySQLParameter(c) + (n_iteraciones != _lstColumnaBE.Count - 1 ? "," : ""));
+                            n_iteraciones++;
+                        }
+                    }
+                    sp.WriteLine(")");
+                    sp.WriteLine("BEGIN");
+                    sp.WriteLine("    update `" + _objTablaBE.Nombre + "`");
+                    sp.WriteLine("    set");
+                    n_iteraciones = 0;
+                    foreach (ColumnaBE c in _lstColumnaBE)
+                    {
+                        if (!c.Es_PK && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoHabilitado)
+                        {
+                            if (c.Nombre == _CampoFechaModificacion)
+                                sp.WriteLine("        `" + c.Nombre + "` = UTC_TIMESTAMP()" + (n_iteraciones != n_no_pk - 1 ? "," : ""));
+                            else
+                                sp.WriteLine("        `" + c.Nombre + "` = v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_no_pk - 1 ? "," : ""));
+                            n_iteraciones++;
+                        }
+                    }
+                    sp.WriteLine("    where");
+                    n_iteraciones = 0;
+                    foreach (ColumnaBE c in _lstColumnaBE)
+                    {
+                        if (c.Es_PK)
+                        {
+                            sp.WriteLine("        `" + c.Nombre + "` = v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_pk - 1 ? " and " : ";"));
+                            n_iteraciones++;
+                        }
+                    }
+                    sp.WriteLine("END $$");
+                    sp.WriteLine("");
+                }
+            }
+        }
+
+        public void MySQLGenerarDelete()
+        {
+            int n_iteraciones = 0;
+            int n_pk = (from c in _lstColumnaBE where c.Es_PK select c).Count();
+            int n_no_pk = (from c in _lstColumnaBE where !c.Es_PK select c).Count();
+
+            using (StreamWriter sp = File.AppendText(_Ruta))
+            {
+                MySQLGenerarHeaderSP(sp);
+                sp.WriteLine("CREATE PROCEDURE `" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Delete` (");
+                foreach (ColumnaBE c in _lstColumnaBE)
+                {
+                    if (c.Es_PK)
+                    {
+                        sp.WriteLine("    in v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.MySQLParameter(c) + (n_iteraciones != n_pk - 1 ? "," : ""));
+                        n_iteraciones++;
+                    }
+                }
+                sp.WriteLine(")");
+                sp.WriteLine("BEGIN");
+                sp.WriteLine("    delete from `" + _objTablaBE.Nombre + "`");
+                sp.WriteLine("    where");
+                n_iteraciones = 0;
+                foreach (ColumnaBE c in _lstColumnaBE)
+                {
+                    if (c.Es_PK)
+                    {
+                        sp.WriteLine("        `" + c.Nombre + "` = v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_pk - 1 ? " and " : ";"));
+                        n_iteraciones++;
+                    }
+                }
+                sp.WriteLine("END $$");
+                sp.WriteLine("");
+            }
+        }
+
+        public void MySQLGenerarSelect()
+        {
+            String inicial_tabla = _objTablaBE.Nombre.First().ToString().ToLower();
+            bool primero = true;
+
+            using (StreamWriter sp = File.AppendText(_Ruta))
+            {
+                MySQLGenerarHeaderSP(sp);
+                sp.WriteLine("CREATE PROCEDURE `" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Select`()");
+                sp.WriteLine("BEGIN");
+                sp.WriteLine("    select ");
+                foreach (ColumnaBE c in _lstColumnaBE)
+                {
+                    sp.WriteLine("        " + (primero ? "" : ",") + inicial_tabla + ".`" + c.Nombre + "`");
+                    primero = false;
+                }
+                sp.WriteLine("    from `" + _objTablaBE.Nombre + "` " + inicial_tabla + ";");
+                sp.WriteLine("END $$");
+                sp.WriteLine("");
+            }
+        }
+
+        public void MySQLGenerarGet()
+        {
+            String inicial_tabla = _objTablaBE.Nombre.First().ToString().ToLower();
+            bool primero = true;
+            int n_iteraciones = 0;
+            int n_pk = (from c in _lstColumnaBE where c.Es_PK select c).Count();
+            int n_no_pk = (from c in _lstColumnaBE where !c.Es_PK select c).Count();
+
+            using (StreamWriter sp = File.AppendText(_Ruta))
+            {
+                MySQLGenerarHeaderSP(sp);
+                sp.WriteLine("CREATE PROCEDURE `" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Get`(");
+                foreach (ColumnaBE c in _lstColumnaBE)
+                {
+                    if (c.Es_PK)
+                    {
+                        sp.WriteLine("    in v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.MySQLParameter(c) + (n_iteraciones != n_pk - 1 ? "," : ""));
+                        n_iteraciones++;
+                    }
+                }
+                sp.WriteLine(")");
+                sp.WriteLine("BEGIN");
+                sp.WriteLine("    select ");
+                foreach (ColumnaBE c in _lstColumnaBE)
+                {
+                    sp.WriteLine("        " + (primero ? "" : ",") + inicial_tabla + ".`" + c.Nombre + "`");
+                    primero = false;
+                }
+                sp.WriteLine("    from `" + _objTablaBE.Nombre + "` " + inicial_tabla);
+                sp.WriteLine("    where");
+                n_iteraciones = 0;
+                foreach (ColumnaBE c in _lstColumnaBE)
+                {
+                    if (c.Es_PK)
+                    {
+                        sp.WriteLine("        " + inicial_tabla + ".`" + c.Nombre + "` = v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_pk - 1 ? " and " : ";"));
+                        n_iteraciones++;
+                    }
+                }
+                sp.WriteLine("END $$");
+                sp.WriteLine("");
+            }
+        }
+        #endregion
     }
 }

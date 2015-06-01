@@ -21,9 +21,79 @@ namespace Linnso.CRUDGen.BL.BC
         public string _CampoFechaModificacion { get; set; }
         public string _CampoHabilitado { get; set; }
 
-        #region SQL Server
-        public void SQLGenerarInsert()
+        private void ClassFromDR(StreamWriter dalc)
         {
+            switch (_DataSource)
+            {
+                case (int)DataSource.SQLServer:
+                    SQLClassFromDR(dalc);
+                    break;
+                case (int)DataSource.MySQL:
+                    MySQLClassFromDR(dalc);
+                    break;
+            }
+        }
+
+        private void SQLClassFromDR(StreamWriter dalc)
+        {
+            foreach (ColumnaBE c in _lstColumnaBE)
+            {
+                if (!c.Acepta_Nulos)
+                    if (c.Nombre == _CampoFechaCreacion || c.Nombre == _CampoFechaModificacion)
+                        dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = HelperTools.UtcToLocal(" + ToolBC.ConvertFromSQL(c.Tipo_Dato, c.Nombre) + ");");
+                    else
+                        dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = " + ToolBC.ConvertFromSQL(c.Tipo_Dato, c.Nombre) + ";");
+                else
+                {
+                    switch (ToolBC.TypeFromSQL(c.Tipo_Dato))
+                    {
+                        case "object":
+                            dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = dr[\"" + c.Nombre + "\"] != DBNull.Value ? (" + ToolBC.TypeFromSQL(c.Tipo_Dato) + "?)dr[\"" + c.Nombre + "\"]" + " : null;");
+                            break;
+                        default:
+                            if (c.Nombre == _CampoFechaCreacion || c.Nombre == _CampoFechaModificacion)
+                                dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = HelperTools.UtcToLocal(" + ToolBC.ConvertFromSQLNULL(c.Tipo_Dato, c.Nombre) + ");");
+                            else
+                                dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = " + ToolBC.ConvertFromSQLNULL(c.Tipo_Dato, c.Nombre) + ";");
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void MySQLClassFromDR(StreamWriter dalc)
+        {
+            foreach (ColumnaBE c in _lstColumnaBE)
+            {
+                if (!c.Acepta_Nulos)
+                    if (c.Nombre == _CampoFechaCreacion || c.Nombre == _CampoFechaModificacion)
+                        dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = HelperTools.UtcToLocal(" + ToolBC.ConvertFromMySQL(c.Tipo_Dato, c.Nombre) + ");");
+                    else
+                        dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = " + ToolBC.ConvertFromMySQL(c.Tipo_Dato, c.Nombre) + ";");
+                else
+                {
+                    switch (ToolBC.TypeFromMySQL(c.Tipo_Dato))
+                    {
+                        case "object":
+                            dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = dr[\"" + c.Nombre + "\"] != DBNull.Value ? (" + ToolBC.TypeFromMySQL(c.Tipo_Dato) + "?)dr[\"" + c.Nombre + "\"]" + " : null;");
+                            break;
+                        default:
+                            if (c.Nombre == _CampoFechaCreacion || c.Nombre == _CampoFechaModificacion)
+                                dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = HelperTools.UtcToLocal(" + ToolBC.ConvertFromMySQLNULL(c.Tipo_Dato, c.Nombre) + ");");
+                            else
+                                dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = " + ToolBC.ConvertFromMySQLNULL(c.Tipo_Dato, c.Nombre) + ";");
+                            break;
+                    }
+                }
+            }
+        }
+
+        public void GenerarInsert()
+        {
+            string connection = GetTipoConnection();
+            string parameter = GetTipoParamenter(); 
+            string command = GetTipoCommand();
+
             StreamWriter dalc = File.AppendText(_Ruta);
 
             int n_creador = (from c in _lstColumnaBE where c.Nombre == _CampoUsuarioCreacion select c).Count();
@@ -38,7 +108,7 @@ namespace Linnso.CRUDGen.BL.BC
             dalc.WriteLine("        {");
             dalc.WriteLine("            String cadena;");
             dalc.WriteLine("            String sql = \"" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Insert\";");
-            dalc.WriteLine("            SqlParameter[] arrParameters = new SqlParameter[" + n_parametros.ToString() + "];");
+            dalc.WriteLine("            " + parameter + "[] arrParameters = new " + parameter + "[" + n_parametros.ToString() + "];");
             if (n_identity == 1)
                 dalc.WriteLine("            int codigo = 0;");
             dalc.WriteLine("");
@@ -46,9 +116,9 @@ namespace Linnso.CRUDGen.BL.BC
             dalc.WriteLine("            {");
             dalc.WriteLine("                cadena = " + (_Tool ? ToolGenBC.GetNombreFuncion() : ToolGenBC.GetCadenaConexion(_Tag)));
             dalc.WriteLine("");
-            dalc.WriteLine("                using(SqlConnection conn = new SqlConnection(cadena))");
+            dalc.WriteLine("                using(" + connection + " conn = new " + connection + "(cadena))");
             dalc.WriteLine("                {");
-            dalc.WriteLine("                    using(SqlCommand cmd = conn.CreateCommand())");
+            dalc.WriteLine("                    using(" + command + " cmd = conn.CreateCommand())");
             dalc.WriteLine("                    {");
             dalc.WriteLine("                        cmd.CommandText = sql;");
             dalc.WriteLine("                        cmd.CommandType = CommandType.StoredProcedure;");
@@ -64,13 +134,13 @@ namespace Linnso.CRUDGen.BL.BC
                     {
                         if (!(n_creador == 1 && n_modificador == 1))
                         {
-                            dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new SqlParameter(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
+                            dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new " + parameter + "(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
                             index++;
                         }
                     }
                     else
                     {
-                        dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new SqlParameter(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
+                        dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new " + parameter + "(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
                         index++;
                     }
                 }
@@ -105,29 +175,32 @@ namespace Linnso.CRUDGen.BL.BC
             dalc.Close();
         }
 
-        public void SQLGenerarUpdate()
+        public void GenerarUpdate()
         {
-            int n_parametros = (from c in _lstColumnaBE 
-                                where !c.Es_PK && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoHabilitado select c).Count();
+            int n_parametros = (from c in _lstColumnaBE where !c.Es_PK && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoHabilitado select c).Count();
             int n_pk = (from c in _lstColumnaBE where c.Es_PK select c).Count();
 
             if (n_parametros != 0 && n_pk != 0)
             {
+                string connection = GetTipoConnection();
+                string parameter = GetTipoParamenter();
+                string command = GetTipoCommand();
+
                 StreamWriter dalc = File.AppendText(_Ruta);
 
                 dalc.WriteLine("        public void Update_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE)");
                 dalc.WriteLine("        {");
                 dalc.WriteLine("            String cadena;");
                 dalc.WriteLine("            String sql = \"" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Update\";");
-                dalc.WriteLine("            SqlParameter[] arrParameters = new SqlParameter[" + (n_parametros + n_pk) + "];");
+                dalc.WriteLine("            " + parameter + "[] arrParameters = new " + parameter + "[" + (n_parametros + n_pk) + "];");
                 dalc.WriteLine("");
                 dalc.WriteLine("            try");
                 dalc.WriteLine("            {");
                 dalc.WriteLine("                cadena = " + (_Tool ? ToolGenBC.GetNombreFuncion() : ToolGenBC.GetCadenaConexion(_Tag)));
                 dalc.WriteLine("");
-                dalc.WriteLine("                using(SqlConnection conn = new SqlConnection(cadena))");
+                dalc.WriteLine("                using(" + connection + " conn = new " + connection + "(cadena))");
                 dalc.WriteLine("                {");
-                dalc.WriteLine("                    using(SqlCommand cmd = conn.CreateCommand())");
+                dalc.WriteLine("                    using(" + command + " cmd = conn.CreateCommand())");
                 dalc.WriteLine("                    {");
                 dalc.WriteLine("                        cmd.CommandText = sql;");
                 dalc.WriteLine("                        cmd.CommandType = CommandType.StoredProcedure;");
@@ -138,7 +211,7 @@ namespace Linnso.CRUDGen.BL.BC
                 {
                     if (c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoHabilitado)
                     {
-                        dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new SqlParameter(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
+                        dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new " + parameter + "(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
                         index++;
                     }
                 }
@@ -233,8 +306,12 @@ namespace Linnso.CRUDGen.BL.BC
             }
         }
 
-        public void SQLGenerarDelete()
+        public void GenerarDelete()
         {
+            string connection = GetTipoConnection();
+            string parameter = GetTipoParamenter();
+            string command = GetTipoCommand();
+            
             StreamWriter dalc = File.AppendText(_Ruta);
 
             int n_key = (from c in _lstColumnaBE where c.Es_PK select c).Count();
@@ -243,15 +320,15 @@ namespace Linnso.CRUDGen.BL.BC
             dalc.WriteLine("        {");
             dalc.WriteLine("            String cadena;");
             dalc.WriteLine("            String sql = \"" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Delete\";");
-            dalc.WriteLine("            SqlParameter[] arrParameters = new SqlParameter[" + n_key + "];");
+            dalc.WriteLine("            " + parameter + "[] arrParameters = new " + parameter + "[" + n_key + "];");
             dalc.WriteLine("");
             dalc.WriteLine("            try");
             dalc.WriteLine("            {");
             dalc.WriteLine("                cadena = " + (_Tool ? ToolGenBC.GetNombreFuncion() : ToolGenBC.GetCadenaConexion(_Tag)));
             dalc.WriteLine("");
-            dalc.WriteLine("                using(SqlConnection conn = new SqlConnection(cadena))");
+            dalc.WriteLine("                using(" + connection + " conn = new " + connection + "(cadena))");
             dalc.WriteLine("                {");
-            dalc.WriteLine("                    using(SqlCommand cmd = conn.CreateCommand())");
+            dalc.WriteLine("                    using(" + command + " cmd = conn.CreateCommand())");
             dalc.WriteLine("                    {");
             dalc.WriteLine("                        cmd.CommandText = sql;");
             dalc.WriteLine("                        cmd.CommandType = CommandType.StoredProcedure;");
@@ -275,8 +352,12 @@ namespace Linnso.CRUDGen.BL.BC
             dalc.Close();
         }
 
-        public void SQLGenerarSelect()
+        public void GenerarSelect()
         {
+            string connection = GetTipoConnection();
+            string command = GetTipoCommand();
+            string datareader = GetTipoDataReader();
+
             StreamWriter dalc = File.AppendText(_Ruta);
 
             dalc.WriteLine("        public List<" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE> Select_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "()");
@@ -290,16 +371,16 @@ namespace Linnso.CRUDGen.BL.BC
             dalc.WriteLine("            {");
             dalc.WriteLine("                cadena = " + (_Tool ? ToolGenBC.GetNombreFuncion() : ToolGenBC.GetCadenaConexion(_Tag)));
             dalc.WriteLine("");
-            dalc.WriteLine("                using(SqlConnection conn = new SqlConnection(cadena))");
+            dalc.WriteLine("                using(" + connection + " conn = new " + connection + "(cadena))");
             dalc.WriteLine("                {");
-            dalc.WriteLine("                    using(SqlCommand cmd = conn.CreateCommand())");
+            dalc.WriteLine("                    using(" + command + " cmd = conn.CreateCommand())");
             dalc.WriteLine("                    {");
             dalc.WriteLine("                        cmd.CommandText = sql;");
             dalc.WriteLine("                        cmd.CommandType = CommandType.StoredProcedure;");
             dalc.WriteLine("");
             dalc.WriteLine("                        cmd.Connection.Open();");
             dalc.WriteLine("");
-            dalc.WriteLine("                        using(SqlDataReader dr = cmd.ExecuteReader())");
+            dalc.WriteLine("                        using(" + datareader + " dr = cmd.ExecuteReader())");
             dalc.WriteLine("                        {");
             dalc.WriteLine("                            while(dr.Read())");
             dalc.WriteLine("                            {");
@@ -307,7 +388,7 @@ namespace Linnso.CRUDGen.BL.BC
             dalc.WriteLine("                                    lst" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE = new List<" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE>();");
             dalc.WriteLine("");
             dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE = new " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE();");
-            SQLClassFromDR(dalc);
+            ClassFromDR(dalc);
             dalc.WriteLine("");
             dalc.WriteLine("                                lst" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE.Add(obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE);");
             dalc.WriteLine("                            }");
@@ -327,8 +408,13 @@ namespace Linnso.CRUDGen.BL.BC
             dalc.Close();
         }
 
-        public void SQLGenerarGet()
+        public void GenerarGet()
         {
+            string connection = GetTipoConnection();
+            string parameter = GetTipoParamenter();
+            string command = GetTipoCommand();
+            string datareader = GetTipoDataReader();
+
             StreamWriter dalc = File.AppendText(_Ruta);
 
             int n_key = (from c in _lstColumnaBE where c.Es_PK select c).Count();
@@ -337,16 +423,16 @@ namespace Linnso.CRUDGen.BL.BC
             dalc.WriteLine("        {");
             dalc.WriteLine("            String cadena;");
             dalc.WriteLine("            String sql = \"" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Get\";");
-            dalc.WriteLine("            SqlParameter[] arrParameters = new SqlParameter[" + n_key + "];");
+            dalc.WriteLine("            " + parameter + "[] arrParameters = new " + parameter + "[" + n_key + "];");
             dalc.WriteLine("            " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE = null;");
             dalc.WriteLine("");
             dalc.WriteLine("            try");
             dalc.WriteLine("            {");
             dalc.WriteLine("                cadena = " + (_Tool ? ToolGenBC.GetNombreFuncion() : ToolGenBC.GetCadenaConexion(_Tag)));
             dalc.WriteLine("");
-            dalc.WriteLine("                using(SqlConnection conn = new SqlConnection(cadena))");
+            dalc.WriteLine("                using(" + connection + " conn = new " + connection + "(cadena))");
             dalc.WriteLine("                {");
-            dalc.WriteLine("                    using(SqlCommand cmd = conn.CreateCommand())");
+            dalc.WriteLine("                    using(" + command + " cmd = conn.CreateCommand())");
             dalc.WriteLine("                    {");
             dalc.WriteLine("                        cmd.CommandText = sql;");
             dalc.WriteLine("                        cmd.CommandType = CommandType.StoredProcedure;");
@@ -358,12 +444,12 @@ namespace Linnso.CRUDGen.BL.BC
             dalc.WriteLine("");
             dalc.WriteLine("                        cmd.Connection.Open();");
             dalc.WriteLine("");
-            dalc.WriteLine("                        using(SqlDataReader dr = cmd.ExecuteReader())");
+            dalc.WriteLine("                        using(" + datareader + " dr = cmd.ExecuteReader())");
             dalc.WriteLine("                        {");
             dalc.WriteLine("                            while(dr.Read())");
             dalc.WriteLine("                            {");
             dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE = new " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE();");
-            SQLClassFromDR(dalc);
+            ClassFromDR(dalc);
             dalc.WriteLine("                            }");
             dalc.WriteLine("                        }");
             dalc.WriteLine("                    }");
@@ -380,39 +466,6 @@ namespace Linnso.CRUDGen.BL.BC
             dalc.Close();
         }
 
-        private void SQLClassFromDR(StreamWriter dalc)
-        {
-            foreach (ColumnaBE c in _lstColumnaBE)
-            {
-                if (!c.Acepta_Nulos)
-                    if (c.Nombre == _CampoFechaCreacion || c.Nombre == _CampoFechaModificacion)
-                        dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = HelperTools.UtcToLocal(" + ToolBC.ConvertFromSQL(c.Tipo_Dato, c.Nombre) + ");");
-                    else
-                        dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = " + ToolBC.ConvertFromSQL(c.Tipo_Dato, c.Nombre) + ";");
-                else
-                {
-                    switch (ToolBC.TypeFromSQL(c.Tipo_Dato))
-                    {
-                        case "object":
-                            dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = dr[\"" + c.Nombre + "\"] != DBNull.Value ? (" + ToolBC.TypeFromSQL(c.Tipo_Dato) + "?)dr[\"" + c.Nombre + "\"]" + " : null;");
-                            break;
-                        default:
-                            if(c.Nombre == _CampoFechaCreacion || c.Nombre == _CampoFechaModificacion)
-                                dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = HelperTools.UtcToLocal(" + ToolBC.ConvertFromSQLNULL(c.Tipo_Dato, c.Nombre) + ");");
-                            else
-                                dalc.WriteLine("                                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + " = " + ToolBC.ConvertFromSQLNULL(c.Tipo_Dato, c.Nombre) + ";");
-                            break;
-                    }
-                }
-            }
-        }
-        #endregion
-
-        #region MySQL
-
-        #endregion
-
-        #region General
         public void GenerarHeader(String nsDALC, String nsBE, String nsHelper)
         {
             StreamWriter dalc = File.AppendText(_Ruta);
@@ -455,16 +508,87 @@ namespace Linnso.CRUDGen.BL.BC
 
         private void KeyParameters(StreamWriter dalc)
         {
+            string parameter = GetTipoParamenter();
             int index = 0;
+
             foreach (ColumnaBE c in _lstColumnaBE)
             {
                 if (c.Es_PK)
                 {
-                    dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new SqlParameter(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", " + ToolBC.StandarizarNombreParametro(c.Nombre) + ");");
+                    dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new " + parameter + "(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", " + ToolBC.StandarizarNombreParametro(c.Nombre) + ");");
                     index++;
                 }
             }
         }
-        #endregion
+
+        private string GetTipoConnection()
+        {
+            string connection = "";
+
+            switch (_DataSource)
+            {
+                case (int)DataSource.SQLServer:
+                    connection = "SqlConnection";
+                    break;
+                case (int)DataSource.MySQL:
+                    connection = "MySqlConnection";
+                    break;
+            }
+
+            return connection;
+        }
+
+        private string GetTipoParamenter()
+        {
+            string parameter = "";
+
+            switch (_DataSource)
+            {
+                case (int)DataSource.SQLServer:
+                    parameter = "SqlParameter";
+                    break;
+                case (int)DataSource.MySQL:
+                    parameter = "MySqlParameter";
+                    break;
+            }
+
+            return parameter;
+        }
+
+        private string GetTipoCommand()
+        {
+            string command = "";
+
+            switch (_DataSource)
+            {
+                case (int)DataSource.SQLServer:
+                    command = "SqlCommand";
+                    break;
+                case (int)DataSource.MySQL:
+                    command = "MySqlCommand";
+                    break;
+            }
+
+            return command;
+        }
+
+        private string GetTipoDataReader()
+        {
+            string datareader = "";
+
+            switch (_DataSource)
+            {
+                case (int)DataSource.SQLServer:
+                    datareader = "SqlDataReader";
+                    break;
+                case (int)DataSource.MySQL:
+                    datareader = "MySqlDataReader";
+                    break;
+            }
+
+            return datareader;
+        }
+
+        
     }
 }

@@ -263,7 +263,7 @@ namespace Linnso.CRUDGen.DL.DALC
                     objColumnaBE.Tipo_Dato = dr["DATA_TYPE"].ToString();
                     objColumnaBE.Es_PK = dr["IS_PK"].ToString().Equals("NO") ? false : true;
                     objColumnaBE.Es_Identity = dr["IS_IDENTITY"].ToString().Equals("NO") ? false : true;
-                    objColumnaBE.Tamano_Maximo = dr["CHARACTER_MAXIMUM_LENGTH"] != DBNull.Value ? Convert.ToInt32(dr["CHARACTER_MAXIMUM_LENGTH"]) : -1;
+                    objColumnaBE.Tamano_Maximo = dr["CHARACTER_MAXIMUM_LENGTH"] != DBNull.Value ? Convert.ToInt64(dr["CHARACTER_MAXIMUM_LENGTH"]) : -1;
                     objColumnaBE.Precision_Numerica = dr["NUMERIC_PRECISION"] != DBNull.Value ? Convert.ToInt32(dr["NUMERIC_PRECISION"]) : -1;
                     objColumnaBE.Precision_Numerica_Base = dr["NUMERIC_SCALE"] != DBNull.Value ? Convert.ToInt32(dr["NUMERIC_SCALE"]) : -1;
                     lstColumnaBE.Add(objColumnaBE);

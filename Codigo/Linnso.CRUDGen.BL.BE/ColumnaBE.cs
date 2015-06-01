@@ -12,7 +12,7 @@ namespace Linnso.CRUDGen.BL.BE
         public String Tipo_Dato { get; set; }
         public Boolean Es_PK { get; set; }
         public Boolean Es_Identity { get; set; }
-        public int Tamano_Maximo { get; set; }
+        public long Tamano_Maximo { get; set; }
         public int Precision_Numerica { get; set; }
         public int Precision_Numerica_Base { get; set; }
     }
