@@ -252,6 +252,7 @@ namespace Linnso.CRUDGen.PL.Win
                                 objBEGenBC._Ruta = archivo_be;
                                 objBEGenBC._lstColumnaBE = lstColumnaBE;
                                 objBEGenBC._objTablaBE = objTablaBE;
+                                objBEGenBC._DataSource = objConexionBE.DataSource;
 
                                 objBEGenBC.GenerarHeader(nsBE);
                                 objBEGenBC.GenerarClase();

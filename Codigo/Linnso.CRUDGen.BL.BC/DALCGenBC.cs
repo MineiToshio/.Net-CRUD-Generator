@@ -93,6 +93,7 @@ namespace Linnso.CRUDGen.BL.BC
             string connection = GetTipoConnection();
             string parameter = GetTipoParamenter(); 
             string command = GetTipoCommand();
+            string prefijoParametro = GetPrefijoParametro();
 
             StreamWriter dalc = File.AppendText(_Ruta);
 
@@ -134,13 +135,13 @@ namespace Linnso.CRUDGen.BL.BC
                     {
                         if (!(n_creador == 1 && n_modificador == 1))
                         {
-                            dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new " + parameter + "(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
+                            dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new " + parameter + "(\"" + prefijoParametro + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
                             index++;
                         }
                     }
                     else
                     {
-                        dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new " + parameter + "(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
+                        dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new " + parameter + "(\"" + prefijoParametro + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
                         index++;
                     }
                 }
@@ -185,6 +186,7 @@ namespace Linnso.CRUDGen.BL.BC
                 string connection = GetTipoConnection();
                 string parameter = GetTipoParamenter();
                 string command = GetTipoCommand();
+                string prefijoParametro = GetPrefijoParametro();
 
                 StreamWriter dalc = File.AppendText(_Ruta);
 
@@ -211,7 +213,7 @@ namespace Linnso.CRUDGen.BL.BC
                 {
                     if (c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoHabilitado)
                     {
-                        dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new " + parameter + "(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
+                        dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new " + parameter + "(\"" + prefijoParametro + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE." + ToolBC.StandarizarNombreClase(c.Nombre) + ");");
                         index++;
                     }
                 }
@@ -311,7 +313,7 @@ namespace Linnso.CRUDGen.BL.BC
             string connection = GetTipoConnection();
             string parameter = GetTipoParamenter();
             string command = GetTipoCommand();
-            
+
             StreamWriter dalc = File.AppendText(_Ruta);
 
             int n_key = (from c in _lstColumnaBE where c.Es_PK select c).Count();
@@ -468,48 +470,53 @@ namespace Linnso.CRUDGen.BL.BC
 
         public void GenerarChangeState()
         {
-            string connection = GetTipoConnection();
-            string parameter = GetTipoParamenter();
-            string command = GetTipoCommand();
+            int n_activo = (from c in _lstColumnaBE where c.Nombre == _CampoHabilitado select c).Count();
 
-            StreamWriter dalc = File.AppendText(_Ruta);
+            if (n_activo > 0)
+            {
+                string connection = GetTipoConnection();
+                string parameter = GetTipoParamenter();
+                string command = GetTipoCommand();
 
-            int n_key = (from c in _lstColumnaBE where c.Es_PK select c).Count();
+                StreamWriter dalc = File.AppendText(_Ruta);
 
-            dalc.WriteLine("        public void Change_State_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParameters(_lstColumnaBE, _DataSource) + ")");
-            dalc.WriteLine("        {");
-            dalc.WriteLine("            String cadena;");
-            dalc.WriteLine("            String sql = \"" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Change_State\";");
-            dalc.WriteLine("            " + parameter + "[] arrParameters = new " + parameter + "[" + n_key + "];");
-            dalc.WriteLine("");
-            dalc.WriteLine("            try");
-            dalc.WriteLine("            {");
-            dalc.WriteLine("                cadena = " + (_Tool ? ToolGenBC.GetNombreFuncion() : ToolGenBC.GetCadenaConexion(_Tag)));
-            dalc.WriteLine("");
-            dalc.WriteLine("                using(" + connection + " conn = new " + connection + "(cadena))");
-            dalc.WriteLine("                {");
-            dalc.WriteLine("                    using(" + command + " cmd = conn.CreateCommand())");
-            dalc.WriteLine("                    {");
-            dalc.WriteLine("                        cmd.CommandText = sql;");
-            dalc.WriteLine("                        cmd.CommandType = CommandType.StoredProcedure;");
-            dalc.WriteLine("");
-            KeyParameters(dalc);
-            dalc.WriteLine("");
-            dalc.WriteLine("                        for (int i = 0; i < arrParameters.Length; i++)");
-            dalc.WriteLine("                            cmd.Parameters.Add(arrParameters[i]);");
-            dalc.WriteLine("");
-            dalc.WriteLine("                        cmd.Connection.Open();");
-            dalc.WriteLine("                        cmd.ExecuteNonQuery();");
-            dalc.WriteLine("                    }");
-            dalc.WriteLine("                }");
-            dalc.WriteLine("            }");
-            dalc.WriteLine("            catch(Exception)");
-            dalc.WriteLine("            {");
-            dalc.WriteLine("                throw;");
-            dalc.WriteLine("            }");
-            dalc.WriteLine("        }");
-            dalc.WriteLine("");
-            dalc.Close();
+                int n_key = (from c in _lstColumnaBE where c.Es_PK select c).Count();
+
+                dalc.WriteLine("        public void Change_State_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParameters(_lstColumnaBE, _DataSource) + ")");
+                dalc.WriteLine("        {");
+                dalc.WriteLine("            String cadena;");
+                dalc.WriteLine("            String sql = \"" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "_Change_State\";");
+                dalc.WriteLine("            " + parameter + "[] arrParameters = new " + parameter + "[" + n_key + "];");
+                dalc.WriteLine("");
+                dalc.WriteLine("            try");
+                dalc.WriteLine("            {");
+                dalc.WriteLine("                cadena = " + (_Tool ? ToolGenBC.GetNombreFuncion() : ToolGenBC.GetCadenaConexion(_Tag)));
+                dalc.WriteLine("");
+                dalc.WriteLine("                using(" + connection + " conn = new " + connection + "(cadena))");
+                dalc.WriteLine("                {");
+                dalc.WriteLine("                    using(" + command + " cmd = conn.CreateCommand())");
+                dalc.WriteLine("                    {");
+                dalc.WriteLine("                        cmd.CommandText = sql;");
+                dalc.WriteLine("                        cmd.CommandType = CommandType.StoredProcedure;");
+                dalc.WriteLine("");
+                KeyParameters(dalc);
+                dalc.WriteLine("");
+                dalc.WriteLine("                        for (int i = 0; i < arrParameters.Length; i++)");
+                dalc.WriteLine("                            cmd.Parameters.Add(arrParameters[i]);");
+                dalc.WriteLine("");
+                dalc.WriteLine("                        cmd.Connection.Open();");
+                dalc.WriteLine("                        cmd.ExecuteNonQuery();");
+                dalc.WriteLine("                    }");
+                dalc.WriteLine("                }");
+                dalc.WriteLine("            }");
+                dalc.WriteLine("            catch(Exception)");
+                dalc.WriteLine("            {");
+                dalc.WriteLine("                throw;");
+                dalc.WriteLine("            }");
+                dalc.WriteLine("        }");
+                dalc.WriteLine("");
+                dalc.Close();
+            }
         }
 
         public void GenerarHeader(String nsDALC, String nsBE, String nsHelper)
@@ -555,13 +562,14 @@ namespace Linnso.CRUDGen.BL.BC
         private void KeyParameters(StreamWriter dalc)
         {
             string parameter = GetTipoParamenter();
+            string prefijoParametro = GetPrefijoParametro();
             int index = 0;
 
             foreach (ColumnaBE c in _lstColumnaBE)
             {
                 if (c.Es_PK)
                 {
-                    dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new " + parameter + "(\"@" + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", " + ToolBC.StandarizarNombreParametro(c.Nombre) + ");");
+                    dalc.WriteLine("                        arrParameters[" + index.ToString() + "] = new " + parameter + "(\"" + prefijoParametro + ToolBC.StandarizarNombreParametro(c.Nombre) + "\", " + ToolBC.StandarizarNombreParametro(c.Nombre) + ");");
                     index++;
                 }
             }
@@ -635,6 +643,21 @@ namespace Linnso.CRUDGen.BL.BC
             return datareader;
         }
 
-        
+        private string GetPrefijoParametro()
+        {
+            string prefijo = "";
+
+            switch (_DataSource)
+            {
+                case (int)DataSource.SQLServer:
+                    prefijo = "@";
+                    break;
+                case (int)DataSource.MySQL:
+                    prefijo = "v_";
+                    break;
+            }
+
+            return prefijo;
+        }
     }
 }

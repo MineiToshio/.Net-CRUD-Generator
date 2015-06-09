@@ -74,6 +74,7 @@ namespace Linnso.CRUDGen.BL.BC
 		{
 			int n_identity = (from c in _lstColumnaBE where c.Es_Identity select c).Count();
 			int n_no_identity = (from c in _lstColumnaBE where !c.Es_Identity select c).Count();
+			int n_parameter = (from c in _lstColumnaBE where !c.Es_Identity && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoHabilitado select c).Count();
 			int n_iteraciones = 0;
 
 			using (StreamWriter sp = File.AppendText(_Ruta))
@@ -89,11 +90,11 @@ namespace Linnso.CRUDGen.BL.BC
 					if (!c.Es_Identity && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoHabilitado)
 					{
 						if (c.Nombre != _CampoUsuarioModificacion)
-							sp.WriteLine("    @" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (c.Acepta_Nulos ? " = null" : "") + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+							sp.WriteLine("    @" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (c.Acepta_Nulos ? " = null" : "") + (n_iteraciones != n_parameter - 1 ? "," : ""));
 						else
 						{
 							if(creador.Count() == 0) //existe campo creador
-								sp.WriteLine("    @" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (c.Acepta_Nulos ? " = null" : "") + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+								sp.WriteLine("    @" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (c.Acepta_Nulos ? " = null" : "") + (n_iteraciones != n_parameter - 1 ? "," : ""));
 						}
 						n_iteraciones++;
 					}
@@ -518,6 +519,7 @@ namespace Linnso.CRUDGen.BL.BC
 		{
 			int n_identity = (from c in _lstColumnaBE where c.Es_Identity select c).Count();
 			int n_no_identity = (from c in _lstColumnaBE where !c.Es_Identity select c).Count();
+			int n_parameter = (from c in _lstColumnaBE where !c.Es_Identity && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoHabilitado select c).Count();
 			int n_iteraciones = 0;
 
 			using (StreamWriter sp = File.AppendText(_Ruta))
@@ -533,11 +535,11 @@ namespace Linnso.CRUDGen.BL.BC
 					if (!c.Es_Identity && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoHabilitado)
 					{
 						if (c.Nombre != _CampoUsuarioModificacion)
-							sp.WriteLine("    in v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+							sp.WriteLine("    in v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (n_iteraciones != n_parameter - 1 ? "," : ""));
 						else
 						{
 							if (creador.Count() == 0) //existe campo creador
-								sp.WriteLine("    in v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (n_iteraciones != n_no_identity - 1 ? "," : ""));
+								sp.WriteLine("    in v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.SQLParameter(c) + (n_iteraciones != n_parameter - 1 ? "," : ""));
 						}
 						n_iteraciones++;
 					}
@@ -595,7 +597,9 @@ namespace Linnso.CRUDGen.BL.BC
 		{
 			int n_no_pk = (from c in _lstColumnaBE where !c.Es_PK select c).Count();
 			int n_pk = (from c in _lstColumnaBE where c.Es_PK select c).Count();
-
+			int n_parameter = (from c in _lstColumnaBE where c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoHabilitado select c).Count();
+			int n_update = (from c in _lstColumnaBE where !c.Es_PK && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoHabilitado select c).Count();
+				
 			if (n_no_pk != 0 && n_pk != 0)
 			{
 				int n_iteraciones = 0;
@@ -608,7 +612,7 @@ namespace Linnso.CRUDGen.BL.BC
 					{
 						if (c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoFechaModificacion && c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoHabilitado)
 						{
-							sp.WriteLine("    v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.MySQLParameter(c) + (n_iteraciones != _lstColumnaBE.Count - 1 ? "," : ""));
+							sp.WriteLine("    v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + " " + ToolBC.MySQLParameter(c) + (n_iteraciones != n_parameter - 1 ? "," : ""));
 							n_iteraciones++;
 						}
 					}
@@ -622,9 +626,9 @@ namespace Linnso.CRUDGen.BL.BC
 						if (!c.Es_PK && c.Nombre != _CampoFechaCreacion && c.Nombre != _CampoUsuarioCreacion && c.Nombre != _CampoHabilitado)
 						{
 							if (c.Nombre == _CampoFechaModificacion)
-								sp.WriteLine("        `" + c.Nombre + "` = UTC_TIMESTAMP()" + (n_iteraciones != n_no_pk - 1 ? "," : ""));
+								sp.WriteLine("        `" + c.Nombre + "` = UTC_TIMESTAMP()" + (n_iteraciones != n_update - 1 ? "," : ""));
 							else
-								sp.WriteLine("        `" + c.Nombre + "` = v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_no_pk - 1 ? "," : ""));
+								sp.WriteLine("        `" + c.Nombre + "` = v_" + ToolBC.StandarizarNombreParametro(c.Nombre) + (n_iteraciones != n_update - 1 ? "," : ""));
 							n_iteraciones++;
 						}
 					}

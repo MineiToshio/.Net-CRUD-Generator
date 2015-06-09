@@ -579,10 +579,6 @@ namespace Linnso.CRUDGen.BL.BC
             return parametros;
         }
 
-        #endregion
-
-        #region General
-
         public static String KeyParameters(List<ColumnaBE> lstColumnaBE, int datasource)
         {
             String parametros = "";

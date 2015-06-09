@@ -12,6 +12,7 @@ namespace Linnso.CRUDGen.BL.BC
         public String _Ruta { get; set; }
         public TablaBE _objTablaBE { get; set; }
         public List<ColumnaBE> _lstColumnaBE { get; set; }
+        public int _DataSource { get; set; }
 
         public void GenerarHeader(String nsBE)
         {
@@ -44,8 +45,18 @@ namespace Linnso.CRUDGen.BL.BC
 
             be.WriteLine("    public class " + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "BE");
             be.WriteLine("    {");
-            foreach(ColumnaBE c in _lstColumnaBE)
-                be.WriteLine("        public " + ToolBC.TypeFromSQL(c.Tipo_Dato) + (c.Acepta_Nulos && !ToolBC.ClaseNull(ToolBC.TypeFromSQL(c.Tipo_Dato)) ? "?" : "") + " " + ToolBC.StandarizarNombreClase(c.Nombre) + " { get; set; }");
+            foreach (ColumnaBE c in _lstColumnaBE)
+            {
+                switch (_DataSource)
+                {
+                    case (int)DataSource.SQLServer:
+                        be.WriteLine("        public " + ToolBC.TypeFromSQL(c.Tipo_Dato) + (c.Acepta_Nulos && !ToolBC.ClaseNull(ToolBC.TypeFromSQL(c.Tipo_Dato)) ? "?" : "") + " " + ToolBC.StandarizarNombreClase(c.Nombre) + " { get; set; }");
+                        break;
+                    case (int)DataSource.MySQL:
+                        be.WriteLine("        public " + ToolBC.TypeFromMySQL(c.Tipo_Dato) + (c.Acepta_Nulos && !ToolBC.ClaseNull(ToolBC.TypeFromMySQL(c.Tipo_Dato)) ? "?" : "") + " " + ToolBC.StandarizarNombreClase(c.Nombre) + " { get; set; }");
+                        break;
+                }
+            }
             be.WriteLine("    }");
 
             be.Close();

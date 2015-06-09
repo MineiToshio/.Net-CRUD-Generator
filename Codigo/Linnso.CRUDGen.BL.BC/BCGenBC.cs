@@ -227,26 +227,31 @@ namespace Linnso.CRUDGen.BL.BC
 
         public void GenerarChangeState()
         {
-            int n_habilitado = (from c in _lstColumnaBE where c.Nombre == _CampoHabilitado select c).Count();
-
-            StreamWriter bc = File.AppendText(_Ruta);
-
             try
             {
-                bc.WriteLine("        public void Change_State_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParameters(_lstColumnaBE, _DataSource) + ")");
-                bc.WriteLine("        {");
-                bc.WriteLine("            try");
-                bc.WriteLine("            {");
-                bc.WriteLine("                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "DALC.Change_State_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyVariables(_lstColumnaBE) + ");");
-                bc.WriteLine("            }");
-                bc.WriteLine("            catch(Exception)");
-                bc.WriteLine("            {");
-                bc.WriteLine("                throw;");
-                bc.WriteLine("            }");
-                bc.WriteLine("        }");
-                bc.WriteLine("");
+                int n_activo = (from c in _lstColumnaBE where c.Nombre == _CampoHabilitado select c).Count();
 
-                bc.Close();
+                if (n_activo > 0)
+                {
+                    int n_habilitado = (from c in _lstColumnaBE where c.Nombre == _CampoHabilitado select c).Count();
+                    StreamWriter bc = File.AppendText(_Ruta);
+
+                    bc.WriteLine("        public void Change_State_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyParameters(_lstColumnaBE, _DataSource) + ")");
+                    bc.WriteLine("        {");
+                    bc.WriteLine("            try");
+                    bc.WriteLine("            {");
+                    bc.WriteLine("                obj" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "DALC.Change_State_" + ToolBC.StandarizarNombreClase(_objTablaBE.Nombre) + "(" + ToolBC.KeyVariables(_lstColumnaBE) + ");");
+                    bc.WriteLine("            }");
+                    bc.WriteLine("            catch(Exception)");
+                    bc.WriteLine("            {");
+                    bc.WriteLine("                throw;");
+                    bc.WriteLine("            }");
+                    bc.WriteLine("        }");
+                    bc.WriteLine("");
+
+                    bc.Close();
+
+                }
             }
             catch (Exception)
             {
